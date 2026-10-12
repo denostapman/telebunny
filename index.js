@@ -1,1 +1,0 @@
-export { default as TeleBunny } from './lib/telebunny.js';

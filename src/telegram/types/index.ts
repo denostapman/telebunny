@@ -1,0 +1,16 @@
+export type * from './common.ts';
+export type * from './bot.ts';
+export type * from './business.ts';
+export type * from './chat.ts';
+export type * from './game.ts';
+export type * from './gift.ts';
+export type * from './inline.ts';
+export type * from './markup.ts';
+export type * from './media.ts';
+export type * from './message.ts';
+export type * from './passport.ts';
+export type * from './payment.ts';
+export type * from './rich.ts';
+export type * from './sticker.ts';
+export type * from './story.ts';
+export type * from './update.ts';

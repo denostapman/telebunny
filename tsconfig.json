@@ -1,19 +1,17 @@
 {
-    "compilerOptions": {
-      "noImplicitAny": false,
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "sourceMap": false,
-      "module": "ES6",
-      "target": "ES6",
-      "outDir": "lib",
-      "rootDir": "src"
-    },
-    "include": [
-      "src"
-    ],
-    "exclude": [
-      "node_modules",
-      "**/*.spec.ts"
-    ]
-  }
+	"include": ["src"],
+	"compilerOptions": {
+		"rootDir": "src",
+		"outDir": "lib",
+		"module": "nodenext",
+		"target": "es2023",
+		"strict": true,
+		"declaration": true,
+		"rewriteRelativeImportExtensions": true,
+		"erasableSyntaxOnly": true,
+		"verbatimModuleSyntax": true,
+		"noEmitOnError": true,
+		"skipLibCheck": true,
+		"types": ["node"]
+	}
+}

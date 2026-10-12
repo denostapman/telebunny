@@ -1,32 +1,48 @@
 {
-  "name": "telebunny",
-  "version": "0.10.0",
-  "description": "Lightweight zero-dependency Node.js module for Telegram Bot API",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "build": "rm -rf lib && tsc",
-    "test": "rm -rf test/build && tsc -p test/tsconfig.test.json && node test/index.js"
-  },
-  "keywords": [
-    "telegram",
-    "telegram bot",
-    "telegram bot api",
-    "telegram bunny",
-    "bunny",
-    "bot",
-    "api"
-  ],
-  "files": [
-    "lib/*"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FBFunnyBunnyFB/telebunny.git"
-  },
-  "author": "Funny Bunny",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^18.15.3"
-  }
+	"name": "telebunny",
+	"version": "1.0.0",
+	"description": "Lightweight zero-dependency Node.js module for Telegram Bot API",
+	"exports": {
+		".": {
+			"types": "./lib/index.d.ts",
+			"default": "./lib/index.js"
+		}
+	},
+	"type": "module",
+	"scripts": {
+		"clean": "node -e \"fs.rmSync('lib', { recursive: true, force: true })\"",
+		"build": "node --run clean && tsc",
+		"test": "node --test test/*.test.ts",
+		"prepack": "npm run build",
+		"prepublishOnly": "npm test",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"keywords": [
+		"telegram",
+		"telegram bot",
+		"telegram bot api",
+		"telegram bunny",
+		"bunny",
+		"bot",
+		"api"
+	],
+	"files": [
+		"lib"
+	],
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/FBFunnyBunnyFB/telebunny.git"
+	},
+	"author": "Funny Bunny",
+	"license": "MIT",
+	"engines": {
+		"node": ">=24.21.0"
+	},
+	"devDependencies": {
+		"@types/node": "26.6.5",
+		"prettier": "3.9.10",
+		"typescript": "7.0.2"
+	}
 }

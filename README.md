@@ -4,12 +4,9 @@
 
 Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.telegram.org/bots/api).
 
-
-[![Bot API Version](https://img.shields.io/badge/Bot%20API-v6.7-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
-[![Node Version](https://img.shields.io/badge/Node-v6.17.1+-brightgreen.svg)](https://nodejs.org/)
+[![Bot API Version](https://img.shields.io/badge/Bot%20API-v10.3-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
+[![Node Version](https://img.shields.io/badge/Node-v24.21+-brightgreen.svg)](https://nodejs.org/)
 [![NPM Package Version](https://img.shields.io/npm/v/telebunny.svg)](https://www.npmjs.com/package/telebunny)
-
-[![https://t.me/FBFunnyBunnyFB](https://img.shields.io/badge/💬%20Telegram-Funny_Bunny-blue.svg?style=flat-square)](https://t.me/FBFunnyBunnyFB)
 
 </div>
 
@@ -22,94 +19,95 @@ npm i telebunny
 ## 🐇 Usage (Polling)
 
 ```typescript
-import { TeleBunny } from "telebunny";
+import { TeleBunny, ParseMode, UpdateType } from 'telebunny';
 
-// Replace <TOKEN> with your bot token
-const BOT_TOKEN = "<TOKEN>";
-// Use "polling" option for fetching new updates using polling method
-const TelegramBot = new TeleBunny(BOT_TOKEN, { polling: true });
-
-// Use listeners to get data from Telegram users
-// Update type parameter can be found on official Telegram Bot API
-TelegramBot.on('message', msg => {
-    // Send response message to chat
-    TelegramBot.sendMessage(msg.chat.id, "Got message update");
+const bot = new TeleBunny('<TOKEN>', {
+	// Listener and polling errors end up here (defaults to console.error)
+	onError: (error) => console.error(error),
 });
 
-// You can also use "got" method as the alias for "on" listeners
-TelegramBot.got('edited_message', msg => {
-    // TeleBunny class instance supports two different option masks
-    // You can pass options to method in such a way:
-    // ~ pass all options in first argument as object
-    // OR
-    // ~ pass options according to API required fields
-    TelegramBot.sendMessage(msg.chat.id, "Got edited_message update", {
-        allow_sending_without_reply: true,
-        reply_to_message_id: msg.message_id
-    });
-    // Uncomment to test alternative method
-    /*
-    TelegramBot.sendMessage({
-        chat_id: msg.chat.id,
-        text: "Got edited_message update (raw options)",
-        allow_sending_without_reply: true,
-        reply_to_message_id: msg.message_id
-    });
-    */
-})
+// Listeners can use string or typed format
+bot.on(UpdateType.Message, async (msg) => {
+	// Required parameters are positional, the rest go into the options object
+	await bot.sendMessage(msg.chat.id, '<b>Got message update</b>', {
+		parse_mode: ParseMode.HTML,
+		reply_parameters: { message_id: msg.message_id },
+	});
+});
+bot.on('callback_query', (query) => bot.answerCallbackQuery(query.id));
+
+// Long polling: one request in flight, updates are queued and handled in order
+await bot.startPolling({
+	timeout: 30,
+	allowedUpdates: ['message', 'callback_query'],
+});
+
+// Stops polling and waits for running listeners
+process.once('SIGINT', () => bot.stopPolling());
 ```
 
 ## 🐇 Usage (Webhook)
 
 ```typescript
-// Production server code example
-// You can use any library/framework for handling HTTP/HTTPS requests
-import { TeleBunny } from "telebunny";
-import { createServer } from "http";
+import { TeleBunny } from 'telebunny';
+import { createServer } from 'node:http';
 
-// Replace <TOKEN> with your bot token
-const BOT_TOKEN = "<TOKEN>";
-// Replace <WEBHOOK> with your url
-const WEBHOOK_URL = "<WEBHOOK>"+BOT_TOKEN;
-// You don't need to set "polling" option when using webhook
-const TelegramBot = new TeleBunny(BOT_TOKEN);
-
-// Set webhook
-TelegramBot.setWebhook(WEBHOOK_URL);
-
-// Add listener for inline requests
-TelegramBot.on("inline_query", msg => {
-    const query = msg.query || "npm telebunny";
-    TelegramBot.answerInlineQuery({
-        inline_query_id: msg.id,
-        button: {
-            text: "Search \""+query+"\" in Google",
-            web_app: {
-                url: "https://www.google.com/search?q="+encodeURIComponent(query)
-            }
-        }
-    });
+const bot = new TeleBunny('<TOKEN>', {
+	// Checked on every webhook request. Without it, setWebhook generates a secret by itself
+	webhookSecret: process.env.WEBHOOK_SECRET,
 });
 
-// Create HTTP server
-createServer((req, res) => {
-    // Process only POST requests for webhook route
-    if(req.method !== "POST" || req.url !== "/"+BOT_TOKEN) return;
-    const chunks:any = [];
-    req.on('data', (chunk) => chunks.push(chunk));
-    req.on('end', () => {
-        const data = Buffer.concat(chunks);
-        // To process incoming messages use processUpdate() method
-        // "data" variable must be Buffer or object type
-        TelegramBot.processUpdate(data);
-    });
-    res.writeHead(200);
-    res.end();
+bot.on('inline_query', async (query) => {
+	await bot.answerInlineQuery(query.id, [], {
+		button: {
+			text: `Search "${query.query}" in Google`,
+			web_app: {
+				url:
+					'https://www.google.com/search?q=' +
+					encodeURIComponent(query.query),
+			},
+		},
+	});
+});
+
+await bot.setWebhook('<WEBHOOK_URL>/webhook');
+
+createServer(async (req, res) => {
+	if (req.method !== 'POST' || req.url !== '/webhook') {
+		return res.writeHead(404).end();
+	}
+
+	const chunks: Buffer[] = [];
+
+	for await (const chunk of req) chunks.push(chunk);
+
+	try {
+		// Resolves after all listeners ran
+		await bot.processUpdate(Buffer.concat(chunks), req.headers);
+		res.writeHead(200).end();
+	} catch {
+		res.writeHead(403).end();
+	}
 }).listen(process.env.PORT || 3000);
 ```
+
+## 📎 Files
+
+Strings are sent as `file_id` or URL. Local files or binary data can be uploaded with `InputFile` wrapper:
+
+```typescript
+import { InputFile } from 'telebunny';
+
+await bot.sendPhoto(chat_id, new InputFile('./cat.jpg'));
+await bot.sendDocument(chat_id, new InputFile(buffer, 'report.pdf'));
+await bot.sendMediaGroup(chat_id, [
+	{ type: 'photo', media: new InputFile('./a.jpg') },
+	{ type: 'photo', media: '<file_id>' },
+]);
+```
+
+Flood-control errors (429) are handled automatically and resent after `retry_after` seconds, up to `maxRetries` times (3 by default)
 
 ## 🔑 License
 
 **The MIT License (MIT)**
-
-Copyright © 2023 Funny Bunny
