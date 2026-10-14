@@ -3,7 +3,7 @@ import type { Method } from './common.ts';
 
 export interface SetPassportDataErrorsParams {
 	/** User identifier */
-	user_id: number;
+	userId: number;
 	/** A JSON-serialized Array describing the errors */
 	errors: PassportElementError[];
 }

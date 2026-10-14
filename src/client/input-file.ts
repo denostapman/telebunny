@@ -10,8 +10,8 @@ export type InputFileSource =
  * file_id or URL; local files and binary data must be wrapped in InputFile.
  *
  * @example
- * await bot.sendPhoto(chat_id, new InputFile('./cat.jpg'));
- * await bot.sendDocument(chat_id, new InputFile(buffer, 'report.pdf'));
+ * await bot.sendPhoto(chatId, new InputFile('./cat.jpg'));
+ * await bot.sendDocument(chatId, new InputFile(buffer, 'report.pdf'));
  */
 export class InputFile {
 	readonly filename: string;

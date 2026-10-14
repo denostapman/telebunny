@@ -7,7 +7,7 @@ export interface StarAmount {
 	/** Integer amount of Telegram Stars, rounded to 0; can be negative */
 	amount: number;
 	/** The number of 1/1000000000 shares of Telegram Stars; from -999999999 to 999999999; can be negative if and only if amount is non-positive */
-	nanostar_amount?: number;
+	nanostarAmount?: number;
 }
 
 /** This object represents a portion of the price for goods or services. */
@@ -25,27 +25,27 @@ export interface Invoice {
 	/** Product description */
 	description: string;
 	/** Unique bot deep-linking parameter that can be used to generate this invoice */
-	start_parameter: string;
+	startParameter: string;
 	/** Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars */
 	currency: string;
 	/** Total price in the smallest units of the currency (integer, not float/double). For example, for a price of `US$ 1.45` pass `amount = 145`. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). */
-	total_amount: number;
+	totalAmount: number;
 }
 
 /** This object represents a shipping address. */
 export interface ShippingAddress {
 	/** Two-letter ISO 3166-1 alpha-2 country code */
-	country_code: string;
+	countryCode: string;
 	/** State, if applicable */
 	state: string;
 	/** City */
 	city: string;
 	/** First line for the address */
-	street_line1: string;
+	streetLine1: string;
 	/** Second line for the address */
-	street_line2: string;
+	streetLine2: string;
 	/** Address post code */
-	post_code: string;
+	postCode: string;
 }
 
 /** This object represents information about an order. */
@@ -53,11 +53,11 @@ export interface OrderInfo {
 	/** User name */
 	name?: string;
 	/** User's phone number */
-	phone_number?: string;
+	phoneNumber?: string;
 	/** User email */
 	email?: string;
 	/** User shipping address */
-	shipping_address?: ShippingAddress;
+	shippingAddress?: ShippingAddress;
 }
 
 /** This object represents one shipping option. */
@@ -75,37 +75,37 @@ export interface SuccessfulPayment {
 	/** Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars */
 	currency: string;
 	/** Total price in the smallest units of the currency (integer, not float/double). For example, for a price of `US$ 1.45` pass `amount = 145`. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). */
-	total_amount: number;
+	totalAmount: number;
 	/** Bot-specified invoice payload */
-	invoice_payload: string;
+	invoicePayload: string;
 	/** Expiration date of the subscription, in Unix time; for recurring payments only */
-	subscription_expiration_date?: number;
+	subscriptionExpirationDate?: number;
 	/** True, if the payment is a recurring payment for a subscription */
-	is_recurring?: true;
+	isRecurring?: true;
 	/** True, if the payment is the first payment for a subscription */
-	is_first_recurring?: true;
+	isFirstRecurring?: true;
 	/** Identifier of the shipping option chosen by the user */
-	shipping_option_id?: string;
+	shippingOptionId?: string;
 	/** Order information provided by the user */
-	order_info?: OrderInfo;
+	orderInfo?: OrderInfo;
 	/** Telegram payment identifier */
-	telegram_payment_charge_id: string;
+	telegramPaymentChargeId: string;
 	/** Provider payment identifier */
-	provider_payment_charge_id: string;
+	providerPaymentChargeId: string;
 }
 
 /** This object contains basic information about a refunded payment. */
 export interface RefundedPayment {
 	/** Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars. Currently, always “XTR”. */
 	currency: 'XTR';
-	/** Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price of `US$ 1.45`, `total_amount = 145`. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). */
-	total_amount: number;
+	/** Total refunded price in the smallest units of the currency (integer, not float/double). For example, for a price of `US$ 1.45`, `totalAmount = 145`. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). */
+	totalAmount: number;
 	/** Bot-specified invoice payload */
-	invoice_payload: string;
+	invoicePayload: string;
 	/** Telegram payment identifier */
-	telegram_payment_charge_id: string;
+	telegramPaymentChargeId: string;
 	/** Provider payment identifier */
-	provider_payment_charge_id?: string;
+	providerPaymentChargeId?: string;
 }
 
 /** This object contains information about an incoming shipping query. */
@@ -115,9 +115,9 @@ export interface ShippingQuery {
 	/** User who sent the query */
 	from: User;
 	/** Bot-specified invoice payload */
-	invoice_payload: string;
+	invoicePayload: string;
 	/** User specified shipping address */
-	shipping_address: ShippingAddress;
+	shippingAddress: ShippingAddress;
 }
 
 /** This object contains information about an incoming pre-checkout query. */
@@ -129,13 +129,13 @@ export interface PreCheckoutQuery {
 	/** Three-letter ISO 4217 currency code, or “XTR” for payments in Telegram Stars */
 	currency: string;
 	/** Total price in the smallest units of the currency (integer, not float/double). For example, for a price of `US$ 1.45` pass `amount = 145`. See the exp parameter in currencies.json, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). */
-	total_amount: number;
+	totalAmount: number;
 	/** Bot-specified invoice payload */
-	invoice_payload: string;
+	invoicePayload: string;
 	/** Identifier of the shipping option chosen by the user */
-	shipping_option_id?: string;
+	shippingOptionId?: string;
 	/** Order information provided by the user */
-	order_info?: OrderInfo;
+	orderInfo?: OrderInfo;
 }
 
 /** This object contains information about a paid media purchase. */
@@ -143,7 +143,7 @@ export interface PaidMediaPurchased {
 	/** User who purchased the media */
 	from: User;
 	/** Bot-specified paid media payload */
-	paid_media_payload: string;
+	paidMediaPayload: string;
 }
 
 /** This object describes the state of a revenue withdrawal operation. Currently, it can be one of */
@@ -177,15 +177,15 @@ export interface RevenueWithdrawalStateFailed {
 /** Contains information about the affiliate that received a commission via this transaction. */
 export interface AffiliateInfo {
 	/** The bot or the user that received an affiliate commission if it was received by a bot or a user */
-	affiliate_user?: User;
+	affiliateUser?: User;
 	/** The chat that received an affiliate commission if it was received by a chat */
-	affiliate_chat?: Chat;
+	affiliateChat?: Chat;
 	/** The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the bot from referred users */
-	commission_per_mille: number;
+	commissionPerMille: number;
 	/** Integer amount of Telegram Stars received by the affiliate from the transaction, rounded to 0; can be negative for refunds */
 	amount: number;
 	/** The number of 1/1000000000 shares of Telegram Stars received by the affiliate; from -999999999 to 999999999; can be negative for refunds */
-	nanostar_amount?: number;
+	nanostarAmount?: number;
 }
 
 /** This object describes the source of a transaction, or its recipient for outgoing transactions. Currently, it can be one of */
@@ -203,7 +203,7 @@ export interface TransactionPartnerUser {
 	/** Type of the transaction partner, always “user” */
 	type: 'user';
 	/** Type of the transaction, currently one of “invoice_payment” for payments via invoices, “paid_media_payment” for payments for paid media, “gift_purchase” for gifts sent by the bot, “premium_purchase” for Telegram Premium subscriptions gifted by the bot, “business_account_transfer” for direct transfers from managed business accounts */
-	transaction_type:
+	transactionType:
 		| 'invoice_payment'
 		| 'paid_media_payment'
 		| 'gift_purchase'
@@ -214,17 +214,17 @@ export interface TransactionPartnerUser {
 	/** Information about the affiliate that received a commission via this transaction. Can be available only for “invoice_payment” and “paid_media_payment” transactions. */
 	affiliate?: AffiliateInfo;
 	/** Bot-specified invoice payload. Can be available only for “invoice_payment” transactions. */
-	invoice_payload?: string;
+	invoicePayload?: string;
 	/** The duration of the paid subscription. Can be available only for “invoice_payment” transactions. */
-	subscription_period?: number;
+	subscriptionPeriod?: number;
 	/** Information about the paid media bought by the user; for “paid_media_payment” transactions only */
-	paid_media?: PaidMedia[];
+	paidMedia?: PaidMedia[];
 	/** Bot-specified paid media payload. Can be available only for “paid_media_payment” transactions. */
-	paid_media_payload?: string;
+	paidMediaPayload?: string;
 	/** The gift sent to the user by the bot; for “gift_purchase” transactions only */
 	gift?: Gift;
 	/** Number of months the gifted Telegram Premium subscription will be active for; for “premium_purchase” transactions only */
-	premium_subscription_duration?: number;
+	premiumSubscriptionDuration?: number;
 }
 
 /** Describes a transaction with a chat. */
@@ -242,9 +242,9 @@ export interface TransactionPartnerAffiliateProgram {
 	/** Type of the transaction partner, always “affiliate_program” */
 	type: 'affiliate_program';
 	/** Information about the bot that sponsored the affiliate program */
-	sponsor_user?: User;
+	sponsorUser?: User;
 	/** The number of Telegram Stars received by the bot for each 1000 Telegram Stars received by the affiliate program sponsor from referred users */
-	commission_per_mille: number;
+	commissionPerMille: number;
 }
 
 /** Describes a withdrawal transaction with Fragment. */
@@ -252,7 +252,7 @@ export interface TransactionPartnerFragment {
 	/** Type of the transaction partner, always “fragment” */
 	type: 'fragment';
 	/** State of the transaction if the transaction is outgoing */
-	withdrawal_state?: RevenueWithdrawalState;
+	withdrawalState?: RevenueWithdrawalState;
 }
 
 /** Describes a withdrawal transaction to the Telegram Ads platform. */
@@ -266,7 +266,7 @@ export interface TransactionPartnerTelegramApi {
 	/** Type of the transaction partner, always “telegram_api” */
 	type: 'telegram_api';
 	/** The number of successful requests that exceeded regular limits and were therefore billed */
-	request_count: number;
+	requestCount: number;
 }
 
 /** Describes a transaction with an unknown source or recipient. */
@@ -277,12 +277,12 @@ export interface TransactionPartnerOther {
 
 /** Describes a Telegram Star transaction. Note that if the buyer initiates a chargeback with the payment provider from whom they acquired Stars (e.g., Apple, Google) following this transaction, the refunded Stars will be deducted from the bot's balance. This is outside of Telegram's control. */
 export interface StarTransaction {
-	/** Unique identifier of the transaction. Coincides with the identifier of the original transaction for refund transactions. Coincides with SuccessfulPayment.telegram_payment_charge_id for successful incoming payments from users. */
+	/** Unique identifier of the transaction. Coincides with the identifier of the original transaction for refund transactions. Coincides with SuccessfulPayment.telegramPaymentChargeId for successful incoming payments from users. */
 	id: string;
 	/** Integer amount of Telegram Stars transferred by the transaction */
 	amount: number;
 	/** The number of 1/1000000000 shares of Telegram Stars transferred by the transaction; from 0 to 999999999 */
-	nanostar_amount?: number;
+	nanostarAmount?: number;
 	/** Date the transaction was created in Unix time */
 	date: number;
 	/** Source of an incoming transaction (e.g., a user purchasing goods or services, Fragment refunding a failed withdrawal). Only for incoming transactions. */

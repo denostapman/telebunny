@@ -5,9 +5,9 @@ import type { WebAppInfo } from './markup.ts';
 /** This object describes the access settings of a bot. */
 export interface BotAccessSettings {
 	/** True, if only selected users can access the bot. The bot's owner can always access it. */
-	is_access_restricted: boolean;
+	isAccessRestricted: boolean;
 	/** The list of other users who have access to the bot if the access is restricted */
-	added_users?: User[];
+	addedUsers?: User[];
 }
 
 /** This object represents a bot command. */
@@ -17,7 +17,7 @@ export interface BotCommand {
 	/** Description of the command; 1-256 characters */
 	description: string;
 	/** True, if the command sends an ephemeral message, which can be seen only by the sender of the message and the bot */
-	is_ephemeral?: boolean;
+	isEphemeral?: boolean;
 }
 
 /** This object represents the scope to which bot commands are applied. Currently, the following 7 scopes are supported: */
@@ -59,7 +59,7 @@ export interface BotCommandScopeChat {
 	/** Scope type, must be chat */
 	type: 'chat';
 	/** Unique identifier for the target chat or username of the target supergroup in the format `@username`. Channel direct messages chats and channel chats aren't supported. */
-	chat_id: ChatId;
+	chatId: ChatId;
 }
 
 /** Represents the scope of bot commands, covering all administrators of a specific group or supergroup chat. */
@@ -67,7 +67,7 @@ export interface BotCommandScopeChatAdministrators {
 	/** Scope type, must be chat_administrators */
 	type: 'chat_administrators';
 	/** Unique identifier for the target chat or username of the target supergroup in the format `@username`. Channel direct messages chats and channel chats aren't supported. */
-	chat_id: ChatId;
+	chatId: ChatId;
 }
 
 /** Represents the scope of bot commands, covering a specific member of a group or supergroup chat. */
@@ -75,9 +75,9 @@ export interface BotCommandScopeChatMember {
 	/** Scope type, must be chat_member */
 	type: 'chat_member';
 	/** Unique identifier for the target chat or username of the target supergroup in the format `@username`. Channel direct messages chats and channel chats aren't supported. */
-	chat_id: ChatId;
+	chatId: ChatId;
 	/** Unique identifier of the target user */
-	user_id: number;
+	userId: number;
 }
 
 /** This object represents the bot's name. */
@@ -95,7 +95,7 @@ export interface BotDescription {
 /** This object represents the bot's short description. */
 export interface BotShortDescription {
 	/** The bot's short description */
-	short_description: string;
+	shortDescription: string;
 }
 
 /** This object describes the bot's menu button in a private chat. It should be one of */
@@ -115,7 +115,7 @@ export interface MenuButtonWebApp {
 	/** Text on the button */
 	text: string;
 	/** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Alternatively, a `t.me` link to a Web App of the bot can be specified in the object instead of the Web App's URL, in which case the Web App will be opened as if the user pressed the link. */
-	web_app: WebAppInfo;
+	webApp: WebAppInfo;
 }
 
 /** Describes that no specific value for the menu button was set. */
@@ -127,13 +127,13 @@ export interface MenuButtonDefault {
 /** Describes an inline message sent by a Web App on behalf of a user. */
 export interface SentWebAppMessage {
 	/** Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message. */
-	inline_message_id?: string;
+	inlineMessageId?: string;
 }
 
 /** Describes an inline message sent by a guest bot. */
 export interface SentGuestMessage {
 	/** Identifier of the sent inline message */
-	inline_message_id: string;
+	inlineMessageId: string;
 }
 
 /** Describes an inline message to be sent by a user of a Mini App. */
@@ -141,7 +141,7 @@ export interface PreparedInlineMessage {
 	/** Unique identifier of the prepared message */
 	id: string;
 	/** Expiration date of the prepared message, in Unix time. Expired prepared messages can no longer be used. */
-	expiration_date: number;
+	expirationDate: number;
 }
 
 /** Describes a keyboard button to be used by a user of a Mini App. */
@@ -153,7 +153,7 @@ export interface PreparedKeyboardButton {
 /** Describes why a request was unsuccessful. */
 export interface ResponseParameters {
 	/** The group has been migrated to a supergroup with the specified identifier. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this identifier. */
-	migrate_to_chat_id?: number;
+	migrateToChatId?: number;
 	/** In case of exceeding flood control, the number of seconds left to wait before the request can be repeated */
-	retry_after?: number;
+	retryAfter?: number;
 }

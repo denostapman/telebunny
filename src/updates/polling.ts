@@ -81,7 +81,7 @@ export class Poller {
 		const controller = new AbortController();
 		const started = this.#api.call(
 			'deleteWebhook',
-			{ drop_pending_updates: this.#dropPendingUpdates },
+			{ dropPendingUpdates: this.#dropPendingUpdates },
 			{ signal: controller.signal },
 		);
 
@@ -123,7 +123,7 @@ export class Poller {
 						offset,
 						limit: this.#limit,
 						timeout: this.#timeout,
-						allowed_updates: this.#allowedUpdates,
+						allowedUpdates: this.#allowedUpdates,
 					},
 					{ signal, timeout: (this.#timeout + 30) * 1_000 },
 				);
@@ -147,7 +147,7 @@ export class Poller {
 			delay = this.#retryDelay;
 
 			if (updates.length > 0) {
-				offset = updates[updates.length - 1].update_id + 1;
+				offset = updates[updates.length - 1].updateId + 1;
 				this.#queue.push(...updates);
 			}
 

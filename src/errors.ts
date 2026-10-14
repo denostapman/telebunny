@@ -32,7 +32,7 @@ export class TelegramError extends TeleBunnyError {
 
 	/** Seconds to wait before repeating the request (flood control), if present. */
 	get retryAfter(): number | undefined {
-		return this.parameters.retry_after;
+		return this.parameters.retryAfter;
 	}
 }
 

@@ -27,7 +27,7 @@ export interface RichMessage {
 	/** Content of the message */
 	blocks: RichBlock[];
 	/** True, if the rich message must be shown right-to-left */
-	is_rtl?: boolean;
+	isRtl?: boolean;
 }
 
 /** Describes a rich message to be sent. Exactly one of the fields html, markdown, or blocks must be used. */
@@ -41,9 +41,9 @@ export interface InputRichMessage {
 	/** List of media that are specified in the markdown or html fields using `tg://photo?id=`, `tg://video?id=`, `tg://document?id=`, and `tg://audio?id=` links */
 	media?: InputRichMessageMedia[];
 	/** Pass True if the rich message must be shown right-to-left */
-	is_rtl?: boolean;
+	isRtl?: boolean;
 	/** Pass True to skip automatic detection of entities (e.g., URLs, email addresses, username mentions, hashtags, cashtags, bot commands, or phone numbers) in the text */
-	skip_entity_detection?: boolean;
+	skipEntityDetection?: boolean;
 }
 
 /** Describes a media element embedded in an outgoing rich message. */
@@ -69,19 +69,19 @@ export interface RichMessageButton {
 	/** HTTP or tg:// URL to be opened when the button is pressed. Links `tg://user?id=<user_id>` can be used to mention a user by their identifier without using a username, if this is allowed by their privacy settings. */
 	url?: string;
 	/** Data to be sent in a callback query to the bot when the button is pressed, 1-64 bytes */
-	callback_data?: string;
+	callbackData?: string;
 	/** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a business account. */
-	web_app?: WebAppInfo;
+	webApp?: WebAppInfo;
 	/** An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the Telegram Login Widget. Not supported for ephemeral messages. */
-	login_url?: LoginUrl;
+	loginUrl?: LoginUrl;
 	/** If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. May be empty, in which case just the bot's username will be inserted. Not supported for messages sent in channel direct messages chats and on behalf of a business account. */
-	switch_inline_query?: string;
+	switchInlineQuery?: string;
 	/** If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. May be empty, in which case only the bot's username will be inserted. Not supported in channels and for messages sent in channel direct messages chats and on behalf of a business account. */
-	switch_inline_query_current_chat?: string;
+	switchInlineQueryCurrentChat?: string;
 	/** If set, pressing the button will prompt the user to select one of their chats of the specified type, open that chat and insert the bot's username and the specified inline query in the input field. Not supported for messages sent in channel direct messages chats and on behalf of a business account. */
-	switch_inline_query_chosen_chat?: SwitchInlineQueryChosenChat;
+	switchInlineQueryChosenChat?: SwitchInlineQueryChosenChat;
 	/** A button that copies the specified text to the clipboard */
-	copy_text?: CopyTextButton;
+	copyText?: CopyTextButton;
 	/** If set, then the button is disabled and does nothing */
 	disabled?: DisabledButton;
 }
@@ -162,9 +162,9 @@ export interface RichTextDateTime {
 	/** The text */
 	text: RichText;
 	/** The Unix time associated with the entity */
-	unix_time: number;
+	unixTime: number;
 	/** The string that defines the formatting of the date and time. See date-time entity formatting for more details. */
-	date_time_format: string;
+	dateTimeFormat: string;
 }
 
 /** A mention of a Telegram user by their identifier. */
@@ -214,9 +214,9 @@ export interface RichTextCustomEmoji {
 	/** Type of the rich text, always “custom_emoji” */
 	type: 'custom_emoji';
 	/** Unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker. */
-	custom_emoji_id: string;
+	customEmojiId: string;
 	/** Alternative emoji for the custom emoji */
-	alternative_text: string;
+	alternativeText: string;
 }
 
 /** A mathematical expression. */
@@ -244,7 +244,7 @@ export interface RichTextEmailAddress {
 	/** The text */
 	text: RichText;
 	/** The email address */
-	email_address: string;
+	emailAddress: string;
 }
 
 /** A text with a phone number. */
@@ -254,7 +254,7 @@ export interface RichTextPhoneNumber {
 	/** The text */
 	text: RichText;
 	/** The phone number */
-	phone_number: string;
+	phoneNumber: string;
 }
 
 /** A text with a bank card number. */
@@ -264,7 +264,7 @@ export interface RichTextBankCardNumber {
 	/** The text */
 	text: RichText;
 	/** The bank card number */
-	bank_card_number: string;
+	bankCardNumber: string;
 }
 
 /** A mention by a username. */
@@ -304,7 +304,7 @@ export interface RichTextBotCommand {
 	/** The text */
 	text: RichText;
 	/** The bot command */
-	bot_command: string;
+	botCommand: string;
 }
 
 /** A button. */
@@ -330,7 +330,7 @@ export interface RichTextAnchorLink {
 	/** The link text */
 	text: RichText;
 	/** The name of the anchor. If the name is empty, then the link brings back to the top of the message. */
-	anchor_name: string;
+	anchorName: string;
 }
 
 /** A reference. */
@@ -350,7 +350,7 @@ export interface RichTextReferenceLink {
 	/** The link text */
 	text: RichText;
 	/** The name of the reference */
-	reference_name: string;
+	referenceName: string;
 }
 
 /** Caption of a rich formatted block. */
@@ -366,7 +366,7 @@ export interface RichBlockTableCell {
 	/** Text in the cell. If omitted, then the cell is invisible. */
 	text?: RichText;
 	/** True, if the cell is a header cell */
-	is_header?: true;
+	isHeader?: true;
 	/** The number of columns the cell spans if it is bigger than 1 */
 	colspan?: number;
 	/** The number of rows the cell spans if it is bigger than 1 */
@@ -384,9 +384,9 @@ export interface RichBlockListItem {
 	/** The content of the item */
 	blocks: RichBlock[];
 	/** True, if the item has a checkbox */
-	has_checkbox?: true;
+	hasCheckbox?: true;
 	/** True, if the item has a checked checkbox */
-	is_checked?: true;
+	isChecked?: true;
 	/** For ordered lists, the numeric value of the item label */
 	value?: number;
 	/** For ordered lists, the type of the item label; must be one of “a” for lowercase letters, “A” for uppercase letters, “i” for lowercase Roman numerals, “I” for uppercase Roman numerals, or “1” for decimal numbers */
@@ -543,11 +543,11 @@ export interface RichBlockTable {
 	/** Cells of the table */
 	cells: RichBlockTableCell[][];
 	/** True, if the table has borders */
-	is_bordered?: true;
+	isBordered?: true;
 	/** True, if the table is striped */
-	is_striped?: true;
+	isStriped?: true;
 	/** True, if table cells have smaller indents */
-	is_compact?: true;
+	isCompact?: true;
 	/** Caption of the table */
 	caption?: RichText;
 }
@@ -561,7 +561,7 @@ export interface RichBlockDetails {
 	/** Content of the block */
 	blocks: RichBlock[];
 	/** True, if the content of the block is visible by default */
-	is_open?: true;
+	isOpen?: true;
 }
 
 /** A block with a map, corresponding to the custom HTML tag `<tg-map>`. */
@@ -597,7 +597,7 @@ export interface RichBlockAnimation {
 	/** The animation */
 	animation: Animation;
 	/** True, if the media preview is covered by a spoiler animation */
-	has_spoiler?: true;
+	hasSpoiler?: true;
 	/** Caption of the block */
 	caption?: RichBlockCaption;
 }
@@ -629,7 +629,7 @@ export interface RichBlockPhoto {
 	/** Available sizes of the photo */
 	photo: PhotoSize[];
 	/** True, if the media preview is covered by a spoiler animation */
-	has_spoiler?: true;
+	hasSpoiler?: true;
 	/** Caption of the block */
 	caption?: RichBlockCaption;
 }
@@ -641,7 +641,7 @@ export interface RichBlockVideo {
 	/** The video */
 	video: Video;
 	/** True, if the media preview is covered by a spoiler animation */
-	has_spoiler?: true;
+	hasSpoiler?: true;
 	/** Caption of the block */
 	caption?: RichBlockCaption;
 }
@@ -651,7 +651,7 @@ export interface RichBlockVoiceNote {
 	/** Type of the block, always “voice_note” */
 	type: 'voice_note';
 	/** The voice note */
-	voice_note: Voice;
+	voiceNote: Voice;
 	/** Caption of the block */
 	caption?: RichBlockCaption;
 }
@@ -669,9 +669,9 @@ export interface InputRichBlockListItem {
 	/** The content of the item */
 	blocks: InputRichBlock[];
 	/** Pass True if the item has a checkbox */
-	has_checkbox?: true;
+	hasCheckbox?: true;
 	/** Pass True if the item has a checked checkbox */
-	is_checked?: true;
+	isChecked?: true;
 	/** For ordered lists, the numeric value of the item label */
 	value?: number;
 	/** For ordered lists, the type of the item label; must be one of “a” for lowercase letters, “A” for uppercase letters, “i” for lowercase Roman numerals, “I” for uppercase Roman numerals, or “1” for decimal numbers */
@@ -828,11 +828,11 @@ export interface InputRichBlockTable {
 	/** Cells of the table */
 	cells: RichBlockTableCell[][];
 	/** Pass True if the table has borders */
-	is_bordered?: true;
+	isBordered?: true;
 	/** Pass True if the table is striped */
-	is_striped?: true;
+	isStriped?: true;
 	/** Pass True if table cells must have smaller indents */
-	is_compact?: true;
+	isCompact?: true;
 	/** Caption of the table */
 	caption?: RichText;
 }
@@ -846,7 +846,7 @@ export interface InputRichBlockDetails {
 	/** Content of the block */
 	blocks: InputRichBlock[];
 	/** Pass True if the content of the block is visible by default */
-	is_open?: true;
+	isOpen?: true;
 }
 
 /** A block with a map, corresponding to the custom HTML tag `<tg-map>`. The map's width and height must not exceed 10000 in total. The width and height ratio must be at most 20. */
@@ -930,7 +930,7 @@ export interface InputRichBlockVoiceNote {
 	/** Type of the block, always “voice_note” */
 	type: 'voice_note';
 	/** The voice note. Caption is ignored. */
-	voice_note: InputMediaVoiceNote;
+	voiceNote: InputMediaVoiceNote;
 	/** Caption of the block */
 	caption?: RichBlockCaption;
 }

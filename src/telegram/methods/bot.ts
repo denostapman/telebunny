@@ -18,46 +18,46 @@ import type { Method } from './common.ts';
 
 export interface AnswerCallbackQueryParams {
 	/** Unique identifier for the query to be answered */
-	callback_query_id: string;
+	callbackQueryId: string;
 	/** Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters. */
 	text?: string;
 	/** If True, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to False. */
-	show_alert?: boolean;
-	/** URL that will be opened by the user's client. If you have created a Game and accepted the conditions via @BotFather, specify the URL that opens your game - note that this will only work if the query comes from a callback_game button. Otherwise, you may use links like `t.me/your_bot?start=XXXX` that open your bot with a parameter. */
+	showAlert?: boolean;
+	/** URL that will be opened by the user's client. If you have created a Game and accepted the conditions via @BotFather, specify the URL that opens your game - note that this will only work if the query comes from a callbackGame button. Otherwise, you may use links like `t.me/your_bot?start=XXXX` that open your bot with a parameter. */
 	url?: string;
 	/** The maximum amount of time in seconds that the result of the callback query may be cached client-side. Defaults to 0. */
-	cache_time?: number;
+	cacheTime?: number;
 }
 
 export interface AnswerGuestQueryParams {
 	/** Unique identifier for the query to be answered */
-	guest_query_id: string;
+	guestQueryId: string;
 	/** A JSON-serialized object describing the message to be sent */
 	result: InlineQueryResult;
 }
 
 export interface GetManagedBotTokenParams {
 	/** User identifier of the managed bot whose token will be returned */
-	user_id: number;
+	userId: number;
 }
 
 export interface ReplaceManagedBotTokenParams {
 	/** User identifier of the managed bot whose token will be replaced */
-	user_id: number;
+	userId: number;
 }
 
 export interface GetManagedBotAccessSettingsParams {
 	/** User identifier of the managed bot whose access settings will be returned */
-	user_id: number;
+	userId: number;
 }
 
 export interface SetManagedBotAccessSettingsParams {
 	/** User identifier of the managed bot whose access settings will be changed */
-	user_id: number;
+	userId: number;
 	/** Pass True if only selected users can access the bot. The bot's owner can always access it. */
-	is_access_restricted: boolean;
-	/** A JSON-serialized list of up to 10 identifiers of users who will have access to the bot in addition to its owner. Ignored if is_access_restricted is False. */
-	added_user_ids?: number[];
+	isAccessRestricted: boolean;
+	/** A JSON-serialized list of up to 10 identifiers of users who will have access to the bot in addition to its owner. Ignored if isAccessRestricted is False. */
+	addedUserIds?: number[];
 }
 
 export interface SetMyCommandsParams {
@@ -66,57 +66,57 @@ export interface SetMyCommandsParams {
 	/** A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault. */
 	scope?: BotCommandScope;
 	/** A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands. */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface DeleteMyCommandsParams {
 	/** A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault. */
 	scope?: BotCommandScope;
 	/** A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands. */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface GetMyCommandsParams {
 	/** A JSON-serialized object, describing scope of users. Defaults to BotCommandScopeDefault. */
 	scope?: BotCommandScope;
 	/** A two-letter ISO 639-1 language code or an empty string */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface SetMyNameParams {
 	/** New bot name; 0-64 characters. Pass an empty string to remove the dedicated name for the given language. */
 	name?: string;
 	/** A two-letter ISO 639-1 language code. If empty, the name will be shown to all users for whose language there is no dedicated name. */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface GetMyNameParams {
 	/** A two-letter ISO 639-1 language code or an empty string */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface SetMyDescriptionParams {
 	/** New bot description; 0-512 characters. Pass an empty string to remove the dedicated description for the given language. */
 	description?: string;
 	/** A two-letter ISO 639-1 language code. If empty, the description will be applied to all users for whose language there is no dedicated description. */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface GetMyDescriptionParams {
 	/** A two-letter ISO 639-1 language code or an empty string */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface SetMyShortDescriptionParams {
 	/** New short description for the bot; 0-120 characters. Pass an empty string to remove the dedicated short description for the given language. */
-	short_description?: string;
+	shortDescription?: string;
 	/** A two-letter ISO 639-1 language code. If empty, the short description will be applied to all users for whose language there is no dedicated short description. */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface GetMyShortDescriptionParams {
 	/** A two-letter ISO 639-1 language code or an empty string */
-	language_code?: string;
+	languageCode?: string;
 }
 
 export interface SetMyProfilePhotoParams {
@@ -126,32 +126,32 @@ export interface SetMyProfilePhotoParams {
 
 export interface SetChatMenuButtonParams {
 	/** Unique identifier for the target private chat. If not specified, the bot's default menu button will be changed. */
-	chat_id?: number;
+	chatId?: number;
 	/** A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault. */
-	menu_button?: MenuButton;
+	menuButton?: MenuButton;
 }
 
 export interface GetChatMenuButtonParams {
 	/** Unique identifier for the target private chat. If not specified, the bot's default menu button will be returned. */
-	chat_id?: number;
+	chatId?: number;
 }
 
 export interface SetMyDefaultAdministratorRightsParams {
 	/** A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared. */
 	rights?: ChatAdministratorRights;
 	/** Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed. */
-	for_channels?: boolean;
+	forChannels?: boolean;
 }
 
 export interface GetMyDefaultAdministratorRightsParams {
 	/** Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned. */
-	for_channels?: boolean;
+	forChannels?: boolean;
 }
 
 export interface SavePreparedKeyboardButtonParams {
 	/** Unique identifier of the target user that can use the button */
-	user_id: number;
-	/** A JSON-serialized object describing the button to be saved. The button must be of the type request_users, request_chat, or request_managed_bot. */
+	userId: number;
+	/** A JSON-serialized object describing the button to be saved. The button must be of the type requestUsers, requestChat, or requestManagedBot. */
 	button: KeyboardButton;
 }
 

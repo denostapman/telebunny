@@ -1,6 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { TeleBunnyError, TelegramError } from '../errors.ts';
+import { camelKeys, isPlainObject, snakeKeys } from './case.ts';
 import {
 	BodyType,
 	HttpClient,
@@ -36,7 +37,7 @@ type ApiResponse =
 			ok: false;
 			error_code: number;
 			description: string;
-			parameters?: ResponseParameters;
+			parameters?: unknown;
 	  };
 
 export class TelegramApi {
@@ -63,18 +64,18 @@ export class TelegramApi {
 			ParamsOf<M> | undefined,
 			CallOptions | undefined,
 		];
-		const body = await toRequestBody(params ?? {});
+		const body = await toRequestBody(snakeKeys(params ?? {}) as object);
 
 		for (let attempt = 0; ; attempt++) {
 			const response = await this.#post(method, body, options);
 
-			if (response.ok) return response.result as ResultOf<M>;
+			if (response.ok) return camelKeys<ResultOf<M>>(response.result);
 
 			const error = new TelegramError(
 				method,
 				response.error_code,
 				response.description,
-				response.parameters,
+				camelKeys<ResponseParameters | undefined>(response.parameters),
 			);
 
 			if (error.retryAfter === undefined || attempt >= this.#maxRetries) {
@@ -126,13 +127,6 @@ function isApiResponse(value: unknown): value is ApiResponse {
 		value !== null &&
 		typeof (value as { ok?: unknown }).ok === 'boolean'
 	);
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-	if (typeof value !== 'object' || value === null) return false;
-
-	const prototype = Object.getPrototypeOf(value);
-	return prototype === Object.prototype || prototype === null;
 }
 
 async function toRequestBody(params: object): Promise<RequestBody> {

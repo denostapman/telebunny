@@ -13,23 +13,23 @@ export interface Story {
 /** Describes the position of a clickable area within a story. */
 export interface StoryAreaPosition {
 	/** The abscissa of the area's center, as a percentage of the media width */
-	x_percentage: number;
+	xPercentage: number;
 	/** The ordinate of the area's center, as a percentage of the media height */
-	y_percentage: number;
+	yPercentage: number;
 	/** The width of the area's rectangle, as a percentage of the media width */
-	width_percentage: number;
+	widthPercentage: number;
 	/** The height of the area's rectangle, as a percentage of the media height */
-	height_percentage: number;
+	heightPercentage: number;
 	/** The clockwise rotation angle of the rectangle, in degrees; 0-360 */
-	rotation_angle: number;
+	rotationAngle: number;
 	/** The radius of the rectangle corner rounding, as a percentage of the media width */
-	corner_radius_percentage: number;
+	cornerRadiusPercentage: number;
 }
 
 /** Describes the physical address of a location. */
 export interface LocationAddress {
 	/** The two-letter ISO 3166-1 alpha-2 country code of the country where the location is located */
-	country_code: string;
+	countryCode: string;
 	/** State of the location */
 	state?: string;
 	/** City of the location */
@@ -63,11 +63,11 @@ export interface StoryAreaTypeSuggestedReaction {
 	/** Type of the area, always “suggested_reaction” */
 	type: 'suggested_reaction';
 	/** Type of the reaction */
-	reaction_type: ReactionType;
+	reactionType: ReactionType;
 	/** Pass True if the reaction area has a dark background */
-	is_dark?: boolean;
+	isDark?: boolean;
 	/** Pass True if reaction area corner is flipped */
-	is_flipped?: boolean;
+	isFlipped?: boolean;
 }
 
 /** Describes a story area pointing to an HTTP or tg:// link. Currently, a story can have up to 3 link areas. */
@@ -87,7 +87,7 @@ export interface StoryAreaTypeWeather {
 	/** Emoji representing the weather */
 	emoji: string;
 	/** A color of the area background in the ARGB format */
-	background_color: number;
+	backgroundColor: number;
 }
 
 /** Describes a story area pointing to a unique gift. Currently, a story can have at most 1 unique gift area. */
@@ -126,7 +126,7 @@ export interface InputStoryContentVideo {
 	/** Precise duration of the video in seconds; 0-60 */
 	duration?: number;
 	/** Timestamp in seconds of the frame that will be used as the static cover for the story. Defaults to 0.0. */
-	cover_frame_timestamp?: number;
+	coverFrameTimestamp?: number;
 	/** Pass True if the video has no sound */
-	is_animation?: boolean;
+	isAnimation?: boolean;
 }

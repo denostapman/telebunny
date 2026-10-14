@@ -30,8 +30,8 @@ const bot = new TeleBunny('<TOKEN>', {
 bot.on(UpdateType.Message, async (msg) => {
 	// Required parameters are positional, the rest go into the options object
 	await bot.sendMessage(msg.chat.id, '<b>Got message update</b>', {
-		parse_mode: ParseMode.HTML,
-		reply_parameters: { message_id: msg.message_id },
+		parseMode: ParseMode.HTML,
+		replyParameters: { messageId: msg.messageId },
 	});
 });
 bot.on('callback_query', (query) => bot.answerCallbackQuery(query.id));
@@ -61,7 +61,7 @@ bot.on('inline_query', async (query) => {
 	await bot.answerInlineQuery(query.id, [], {
 		button: {
 			text: `Search "${query.query}" in Google`,
-			web_app: {
+			webApp: {
 				url:
 					'https://www.google.com/search?q=' +
 					encodeURIComponent(query.query),
@@ -98,15 +98,15 @@ Strings are sent as `file_id` or URL. Local files or binary data can be uploaded
 ```typescript
 import { InputFile } from 'telebunny';
 
-await bot.sendPhoto(chat_id, new InputFile('./cat.jpg'));
-await bot.sendDocument(chat_id, new InputFile(buffer, 'report.pdf'));
-await bot.sendMediaGroup(chat_id, [
+await bot.sendPhoto(chatId, new InputFile('./cat.jpg'));
+await bot.sendDocument(chatId, new InputFile(buffer, 'report.pdf'));
+await bot.sendMediaGroup(chatId, [
 	{ type: 'photo', media: new InputFile('./a.jpg') },
 	{ type: 'photo', media: '<file_id>' },
 ]);
 ```
 
-Flood-control errors (429) are handled automatically and resent after `retry_after` seconds, up to `maxRetries` times (3 by default)
+Flood-control errors (429) are handled automatically and resent after `retryAfter` seconds, up to `maxRetries` times (3 by default)
 
 ## 🔑 License
 

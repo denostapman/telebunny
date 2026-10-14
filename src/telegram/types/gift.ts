@@ -5,11 +5,11 @@ import type { Sticker } from './sticker.ts';
 /** This object describes the background of a gift. */
 export interface GiftBackground {
 	/** Center color of the background in RGB format */
-	center_color: number;
+	centerColor: number;
 	/** Edge color of the background in RGB format */
-	edge_color: number;
+	edgeColor: number;
 	/** Text color of the background in RGB format */
-	text_color: number;
+	textColor: number;
 }
 
 /** This object represents a gift that can be sent by the bot. */
@@ -19,27 +19,27 @@ export interface Gift {
 	/** The sticker that represents the gift */
 	sticker: Sticker;
 	/** The number of Telegram Stars that must be paid to send the sticker */
-	star_count: number;
+	starCount: number;
 	/** The number of Telegram Stars that must be paid to upgrade the gift to a unique one */
-	upgrade_star_count?: number;
+	upgradeStarCount?: number;
 	/** True, if the gift can only be purchased by Telegram Premium subscribers */
-	is_premium?: true;
+	isPremium?: true;
 	/** True, if the gift can be used (after being upgraded) to customize a user's appearance */
-	has_colors?: true;
+	hasColors?: true;
 	/** The total number of gifts of this type that can be sent by all users; for limited gifts only */
-	total_count?: number;
+	totalCount?: number;
 	/** The number of remaining gifts of this type that can be sent by all users; for limited gifts only */
-	remaining_count?: number;
+	remainingCount?: number;
 	/** The total number of gifts of this type that can be sent by the bot; for limited gifts only */
-	personal_total_count?: number;
+	personalTotalCount?: number;
 	/** The number of remaining gifts of this type that can be sent by the bot; for limited gifts only */
-	personal_remaining_count?: number;
+	personalRemainingCount?: number;
 	/** Background of the gift */
 	background?: GiftBackground;
 	/** The total number of different unique gifts that can be obtained by upgrading the gift */
-	unique_gift_variant_count?: number;
+	uniqueGiftVariantCount?: number;
 	/** Information about the chat that published the gift */
-	publisher_chat?: Chat;
+	publisherChat?: Chat;
 }
 
 /** This object represent a list of gifts. */
@@ -55,7 +55,7 @@ export interface UniqueGiftModel {
 	/** The sticker that represents the unique gift */
 	sticker: Sticker;
 	/** The number of unique gifts that receive this model for every 1000 gift upgrades. Always 0 for crafted gifts. */
-	rarity_per_mille: number;
+	rarityPerMille: number;
 	/** Rarity of the model if it is a crafted model. Currently, can be “uncommon”, “rare”, “epic”, or “legendary”. */
 	rarity?: 'uncommon' | 'rare' | 'epic' | 'legendary';
 }
@@ -67,19 +67,19 @@ export interface UniqueGiftSymbol {
 	/** The sticker that represents the unique gift */
 	sticker: Sticker;
 	/** The number of unique gifts that receive this model for every 1000 gifts upgraded */
-	rarity_per_mille: number;
+	rarityPerMille: number;
 }
 
 /** This object describes the colors of the backdrop of a unique gift. */
 export interface UniqueGiftBackdropColors {
 	/** The color in the center of the backdrop in RGB format */
-	center_color: number;
+	centerColor: number;
 	/** The color on the edges of the backdrop in RGB format */
-	edge_color: number;
+	edgeColor: number;
 	/** The color to be applied to the symbol in RGB format */
-	symbol_color: number;
+	symbolColor: number;
 	/** The color for the text on the backdrop in RGB format */
-	text_color: number;
+	textColor: number;
 }
 
 /** This object describes the backdrop of a unique gift. */
@@ -89,31 +89,31 @@ export interface UniqueGiftBackdrop {
 	/** Colors of the backdrop */
 	colors: UniqueGiftBackdropColors;
 	/** The number of unique gifts that receive this backdrop for every 1000 gifts upgraded */
-	rarity_per_mille: number;
+	rarityPerMille: number;
 }
 
 /** This object contains information about the color scheme for a user's name, message replies and link previews based on a unique gift. */
 export interface UniqueGiftColors {
 	/** Custom emoji identifier of the unique gift's model */
-	model_custom_emoji_id: string;
+	modelCustomEmojiId: string;
 	/** Custom emoji identifier of the unique gift's symbol */
-	symbol_custom_emoji_id: string;
+	symbolCustomEmojiId: string;
 	/** Main color used in light themes; RGB format */
-	light_theme_main_color: number;
+	lightThemeMainColor: number;
 	/** List of 1-3 additional colors used in light themes; RGB format */
-	light_theme_other_colors: number[];
+	lightThemeOtherColors: number[];
 	/** Main color used in dark themes; RGB format */
-	dark_theme_main_color: number;
+	darkThemeMainColor: number;
 	/** List of 1-3 additional colors used in dark themes; RGB format */
-	dark_theme_other_colors: number[];
+	darkThemeOtherColors: number[];
 }
 
 /** This object describes a unique gift that was upgraded from a regular gift. */
 export interface UniqueGift {
 	/** Identifier of the regular gift from which the gift was upgraded */
-	gift_id: string;
+	giftId: string;
 	/** Human-readable name of the regular gift from which this unique gift was upgraded */
-	base_name: string;
+	baseName: string;
 	/** Unique name of the gift. This name can be used in `https://t.me/nft/...` links and story areas. */
 	name: string;
 	/** Unique number of the upgraded gift among gifts upgraded from the same regular gift */
@@ -125,15 +125,15 @@ export interface UniqueGift {
 	/** Backdrop of the gift */
 	backdrop: UniqueGiftBackdrop;
 	/** True, if the original regular gift was exclusively purchaseable by Telegram Premium subscribers */
-	is_premium?: true;
+	isPremium?: true;
 	/** True, if the gift was used to craft another gift and isn't available anymore */
-	is_burned?: true;
+	isBurned?: true;
 	/** True, if the gift is assigned from the TON blockchain and can't be resold or transferred in Telegram */
-	is_from_blockchain?: true;
+	isFromBlockchain?: true;
 	/** The color scheme that can be used by the gift's owner for the chat's name, replies to messages and link previews; for business account gifts and gifts that are currently on sale only */
 	colors?: UniqueGiftColors;
 	/** Information about the chat that published the gift */
-	publisher_chat?: Chat;
+	publisherChat?: Chat;
 }
 
 /** Describes a service message about a regular gift that was sent or received. */
@@ -141,23 +141,23 @@ export interface GiftInfo {
 	/** Information about the gift */
 	gift: Gift;
 	/** Unique identifier of the received gift for the bot; only present for gifts received on behalf of business accounts */
-	owned_gift_id?: string;
+	ownedGiftId?: string;
 	/** Number of Telegram Stars that can be claimed by the receiver by converting the gift; omitted if conversion to Telegram Stars is impossible */
-	convert_star_count?: number;
+	convertStarCount?: number;
 	/** Number of Telegram Stars that were prepaid for the ability to upgrade the gift */
-	prepaid_upgrade_star_count?: number;
+	prepaidUpgradeStarCount?: number;
 	/** True, if the gift's upgrade was purchased after the gift was sent */
-	is_upgrade_separate?: true;
+	isUpgradeSeparate?: true;
 	/** True, if the gift can be upgraded to a unique gift */
-	can_be_upgraded?: true;
+	canBeUpgraded?: true;
 	/** Text of the message that was added to the gift */
 	text?: string;
 	/** Special entities that appear in the text */
 	entities?: MessageEntity[];
 	/** True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able to see them */
-	is_private?: true;
+	isPrivate?: true;
 	/** Unique number reserved for this gift when upgraded. See the number field in UniqueGift. */
-	unique_gift_number?: number;
+	uniqueGiftNumber?: number;
 }
 
 /** Describes a service message about a unique gift that was sent or received. */
@@ -171,17 +171,17 @@ export interface UniqueGiftInfo {
 	/** Special entities that appear in the text */
 	entities?: MessageEntity[];
 	/** True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able to see them */
-	is_private?: true;
+	isPrivate?: true;
 	/** For gifts bought from other users, the currency in which the payment for the gift was done. Currently, one of “XTR” for Telegram Stars or “TON” for TON grams. */
-	last_resale_currency?: 'XTR' | 'TON';
+	lastResaleCurrency?: 'XTR' | 'TON';
 	/** For gifts bought from other users, the price paid for the gift in either Telegram Stars or nanograms */
-	last_resale_amount?: number;
+	lastResaleAmount?: number;
 	/** Unique identifier of the received gift for the bot; only present for gifts received on behalf of business accounts */
-	owned_gift_id?: string;
+	ownedGiftId?: string;
 	/** Number of Telegram Stars that must be paid to transfer the gift; omitted if the bot cannot transfer the gift */
-	transfer_star_count?: number;
+	transferStarCount?: number;
 	/** Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can be transferred now. */
-	next_transfer_date?: number;
+	nextTransferDate?: number;
 }
 
 /** This object describes a gift received and owned by a user or a chat. Currently, it can be one of */
@@ -194,31 +194,31 @@ export interface OwnedGiftRegular {
 	/** Information about the regular gift */
 	gift: Gift;
 	/** Unique identifier of the gift for the bot; for gifts received on behalf of business accounts only */
-	owned_gift_id?: string;
+	ownedGiftId?: string;
 	/** Sender of the gift if it is a known user */
-	sender_user?: User;
+	senderUser?: User;
 	/** Date the gift was sent in Unix time */
-	send_date: number;
+	sendDate: number;
 	/** Text of the message that was added to the gift */
 	text?: string;
 	/** Special entities that appear in the text */
 	entities?: MessageEntity[];
 	/** True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able to see them */
-	is_private?: true;
+	isPrivate?: true;
 	/** True, if the gift is displayed on the account's profile page; for gifts received on behalf of business accounts only */
-	is_saved?: true;
+	isSaved?: true;
 	/** True, if the gift can be upgraded to a unique gift; for gifts received on behalf of business accounts only */
-	can_be_upgraded?: true;
+	canBeUpgraded?: true;
 	/** True, if the gift was refunded and isn't available anymore */
-	was_refunded?: true;
+	wasRefunded?: true;
 	/** Number of Telegram Stars that can be claimed by the receiver instead of the gift; omitted if the gift cannot be converted to Telegram Stars; for gifts received on behalf of business accounts only */
-	convert_star_count?: number;
+	convertStarCount?: number;
 	/** Number of Telegram Stars that were paid for the ability to upgrade the gift */
-	prepaid_upgrade_star_count?: number;
+	prepaidUpgradeStarCount?: number;
 	/** True, if the gift's upgrade was purchased after the gift was sent; for gifts received on behalf of business accounts only */
-	is_upgrade_separate?: true;
+	isUpgradeSeparate?: true;
 	/** Unique number reserved for this gift when upgraded. See the number field in UniqueGift. */
-	unique_gift_number?: number;
+	uniqueGiftNumber?: number;
 }
 
 /** Describes a unique gift received and owned by a user or a chat. */
@@ -228,41 +228,41 @@ export interface OwnedGiftUnique {
 	/** Information about the unique gift */
 	gift: UniqueGift;
 	/** Unique identifier of the received gift for the bot; for gifts received on behalf of business accounts only */
-	owned_gift_id?: string;
+	ownedGiftId?: string;
 	/** Sender of the gift if it is a known user */
-	sender_user?: User;
+	senderUser?: User;
 	/** Date the gift was sent in Unix time */
-	send_date: number;
+	sendDate: number;
 	/** True, if the gift is displayed on the account's profile page; for gifts received on behalf of business accounts only */
-	is_saved?: true;
+	isSaved?: true;
 	/** True, if the gift can be transferred to another owner; for gifts received on behalf of business accounts only */
-	can_be_transferred?: true;
+	canBeTransferred?: true;
 	/** Number of Telegram Stars that must be paid to transfer the gift; omitted if the bot cannot transfer the gift */
-	transfer_star_count?: number;
+	transferStarCount?: number;
 	/** Point in time (Unix timestamp) when the gift can be transferred. If it is in the past, then the gift can be transferred now. */
-	next_transfer_date?: number;
+	nextTransferDate?: number;
 }
 
 /** Contains the list of gifts received and owned by a user or a chat. */
 export interface OwnedGifts {
 	/** The total number of gifts owned by the user or the chat */
-	total_count: number;
+	totalCount: number;
 	/** The list of gifts */
 	gifts: OwnedGift[];
 	/** Offset for the next request. If empty, then there are no more results. */
-	next_offset?: string;
+	nextOffset?: string;
 }
 
 /** This object describes the types of gifts that can be gifted to a user or a chat. */
 export interface AcceptedGiftTypes {
 	/** True, if unlimited regular gifts are accepted */
-	unlimited_gifts: boolean;
+	unlimitedGifts: boolean;
 	/** True, if limited regular gifts are accepted */
-	limited_gifts: boolean;
+	limitedGifts: boolean;
 	/** True, if unique gifts or gifts that can be upgraded to unique for free are accepted */
-	unique_gifts: boolean;
+	uniqueGifts: boolean;
 	/** True, if a Telegram Premium subscription is accepted */
-	premium_subscription: boolean;
+	premiumSubscription: boolean;
 	/** True, if transfers of unique gifts from channels are accepted */
-	gifts_from_channels: boolean;
+	giftsFromChannels: boolean;
 }

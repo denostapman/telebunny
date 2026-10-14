@@ -5,37 +5,37 @@ import type { MessageEntity } from '../types/message.ts';
 import type { Method } from './common.ts';
 
 export interface SendGiftParams {
-	/** Required if chat_id is not specified. Unique identifier of the target user who will receive the gift. */
-	user_id?: number;
-	/** Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format `@username`) that will receive the gift. */
-	chat_id?: ChatId;
+	/** Required if chatId is not specified. Unique identifier of the target user who will receive the gift. */
+	userId?: number;
+	/** Required if userId is not specified. Unique identifier for the chat or username of the channel (in the format `@username`) that will receive the gift. */
+	chatId?: ChatId;
 	/** Identifier of the gift; limited gifts can't be sent to channel chats */
-	gift_id: string;
+	giftId: string;
 	/** Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver */
-	pay_for_upgrade?: boolean;
+	payForUpgrade?: boolean;
 	/** Text that will be shown along with the gift; 0-128 characters */
 	text?: string;
 	/** Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored. */
-	text_parse_mode?: ParseMode;
-	/** A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored. */
-	text_entities?: MessageEntity[];
+	textParseMode?: ParseMode;
+	/** A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of textParseMode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, “custom_emoji”, and “date_time” are ignored. */
+	textEntities?: MessageEntity[];
 }
 
 export interface GetUserGiftsParams {
 	/** Unique identifier of the user */
-	user_id: number;
+	userId: number;
 	/** Pass True to exclude gifts that can be purchased an unlimited number of times */
-	exclude_unlimited?: boolean;
+	excludeUnlimited?: boolean;
 	/** Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique */
-	exclude_limited_upgradable?: boolean;
+	excludeLimitedUpgradable?: boolean;
 	/** Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique */
-	exclude_limited_non_upgradable?: boolean;
+	excludeLimitedNonUpgradable?: boolean;
 	/** Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in Telegram */
-	exclude_from_blockchain?: boolean;
+	excludeFromBlockchain?: boolean;
 	/** Pass True to exclude unique gifts */
-	exclude_unique?: boolean;
+	excludeUnique?: boolean;
 	/** Pass True to sort results by gift price instead of send date. Sorting is applied before pagination. */
-	sort_by_price?: boolean;
+	sortByPrice?: boolean;
 	/** Offset of the first entry to return as received from the previous request; use an empty string to get the first chunk of results */
 	offset?: string;
 	/** The maximum number of gifts to be returned; 1-100. Defaults to 100. */
@@ -44,23 +44,23 @@ export interface GetUserGiftsParams {
 
 export interface GetChatGiftsParams {
 	/** Unique identifier for the target chat or username of the target channel in the format `@username` */
-	chat_id: ChatId;
+	chatId: ChatId;
 	/** Pass True to exclude gifts that aren't saved to the chat's profile page. Always True, unless the bot has the can_post_messages administrator right in the channel. */
-	exclude_unsaved?: boolean;
+	excludeUnsaved?: boolean;
 	/** Pass True to exclude gifts that are saved to the chat's profile page. Always False, unless the bot has the can_post_messages administrator right in the channel. */
-	exclude_saved?: boolean;
+	excludeSaved?: boolean;
 	/** Pass True to exclude gifts that can be purchased an unlimited number of times */
-	exclude_unlimited?: boolean;
+	excludeUnlimited?: boolean;
 	/** Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique */
-	exclude_limited_upgradable?: boolean;
+	excludeLimitedUpgradable?: boolean;
 	/** Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique */
-	exclude_limited_non_upgradable?: boolean;
+	excludeLimitedNonUpgradable?: boolean;
 	/** Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in Telegram */
-	exclude_from_blockchain?: boolean;
+	excludeFromBlockchain?: boolean;
 	/** Pass True to exclude unique gifts */
-	exclude_unique?: boolean;
+	excludeUnique?: boolean;
 	/** Pass True to sort results by gift price instead of send date. Sorting is applied before pagination. */
-	sort_by_price?: boolean;
+	sortByPrice?: boolean;
 	/** Offset of the first entry to return as received from the previous request; use an empty string to get the first chunk of results */
 	offset?: string;
 	/** The maximum number of gifts to be returned; 1-100. Defaults to 100. */
@@ -69,31 +69,31 @@ export interface GetChatGiftsParams {
 
 export interface ConvertGiftToStarsParams {
 	/** Unique identifier of the business connection */
-	business_connection_id: string;
+	businessConnectionId: string;
 	/** Unique identifier of the regular gift that should be converted to Telegram Stars */
-	owned_gift_id: string;
+	ownedGiftId: string;
 }
 
 export interface UpgradeGiftParams {
 	/** Unique identifier of the business connection */
-	business_connection_id: string;
+	businessConnectionId: string;
 	/** Unique identifier of the regular gift that should be upgraded to a unique one */
-	owned_gift_id: string;
+	ownedGiftId: string;
 	/** Pass True to keep the original gift text, sender and receiver in the upgraded gift */
-	keep_original_details?: boolean;
-	/** The amount of Telegram Stars that will be paid for the upgrade from the business account balance. If `gift.prepaid_upgrade_star_count > 0`, then pass 0, otherwise, the can_transfer_stars business bot right is required and `gift.upgrade_star_count` must be passed. */
-	star_count?: number;
+	keepOriginalDetails?: boolean;
+	/** The amount of Telegram Stars that will be paid for the upgrade from the business account balance. If `gift.prepaid_upgrade_star_count > 0`, then pass 0, otherwise, the canTransferStars business bot right is required and `gift.upgrade_star_count` must be passed. */
+	starCount?: number;
 }
 
 export interface TransferGiftParams {
 	/** Unique identifier of the business connection */
-	business_connection_id: string;
+	businessConnectionId: string;
 	/** Unique identifier of the regular gift that should be transferred */
-	owned_gift_id: string;
+	ownedGiftId: string;
 	/** Unique identifier of the chat which will own the gift. The chat must be active in the last 24 hours. */
-	new_owner_chat_id: number;
-	/** The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive, then the can_transfer_stars business bot right is required. */
-	star_count?: number;
+	newOwnerChatId: number;
+	/** The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive, then the canTransferStars business bot right is required. */
+	starCount?: number;
 }
 
 export interface GiftMethods {
@@ -105,10 +105,10 @@ export interface GiftMethods {
 	getUserGifts: Method<GetUserGiftsParams, OwnedGifts>;
 	/** Returns the gifts owned by a chat. Returns OwnedGifts on success. */
 	getChatGifts: Method<GetChatGiftsParams, OwnedGifts>;
-	/** Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right. Returns True on success. */
+	/** Converts a given regular gift to Telegram Stars. Requires the canConvertGiftsToStars business bot right. Returns True on success. */
 	convertGiftToStars: Method<ConvertGiftToStarsParams, true>;
-	/** Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right. Additionally requires the can_transfer_stars business bot right if the upgrade is paid. Returns True on success. */
+	/** Upgrades a given regular gift to a unique gift. Requires the canTransferAndUpgradeGifts business bot right. Additionally requires the canTransferStars business bot right if the upgrade is paid. Returns True on success. */
 	upgradeGift: Method<UpgradeGiftParams, true>;
-	/** Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right. Requires can_transfer_stars business bot right if the transfer is paid. Returns True on success. */
+	/** Transfers an owned unique gift to another user. Requires the canTransferAndUpgradeGifts business bot right. Requires canTransferStars business bot right if the transfer is paid. Returns True on success. */
 	transferGift: Method<TransferGiftParams, true>;
 }

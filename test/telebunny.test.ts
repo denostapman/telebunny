@@ -8,8 +8,6 @@ import {
 	InputMediaType,
 	ParseMode,
 	UpdateType,
-	type Message,
-	type Update,
 } from '../src/telegram/index.ts';
 import {
 	fail,
@@ -48,33 +46,41 @@ afterEach(async () => {
 	bot = telegram = undefined;
 });
 
-const message = (text: string): Message => ({
+interface WireUpdate {
+	update_id: number;
+	message: object;
+}
+
+const message = (text: string) => ({
 	message_id: 1,
 	date: 0,
 	chat: { id: 42, type: 'private' },
 	text,
 });
 
-const updates = (...texts: string[]): Update[] =>
+const updates = (...texts: string[]): WireUpdate[] =>
 	texts.map((text, i) => ({ update_id: i + 1, message: message(text) }));
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('API calls', () => {
-	it('sends positional and optional parameters as JSON', async () => {
+	it('sends positional and optional parameters as snake_case JSON', async () => {
 		const { bot, telegram } = await setup(() => ok(message('hi')));
 
 		const result = await bot.sendMessage(42, 'hi', {
-			parse_mode: ParseMode.HTML,
+			parseMode: ParseMode.HTML,
+			replyParameters: { messageId: 7 },
 		});
 
 		assert.equal(result.text, 'hi');
+		assert.equal(result.messageId, 1);
 		assert.equal(telegram.requests[0].method, 'sendMessage');
 		assert.equal(telegram.requests[0].contentType, 'application/json');
 		assert.deepEqual(telegram.requests[0].params, {
 			chat_id: 42,
 			text: 'hi',
 			parse_mode: 'HTML',
+			reply_parameters: { message_id: 7 },
 		});
 	});
 
@@ -83,18 +89,21 @@ describe('API calls', () => {
 			ok({ id: 1, is_bot: true, first_name: 'Bunny' }),
 		);
 
-		assert.equal((await bot.getMe()).first_name, 'Bunny');
+		assert.equal((await bot.getMe()).firstName, 'Bunny');
 	});
 
 	it('rejects with TelegramError on failed requests', async () => {
 		const { bot } = await setup(() =>
-			fail(400, 'Bad Request: message to delete not found'),
+			fail(400, 'Bad Request: message to delete not found', {
+				migrate_to_chat_id: 43,
+			}),
 		);
 
 		await assert.rejects(bot.deleteMessage(42, 1), (error) => {
 			assert.ok(error instanceof TelegramError);
 			assert.equal(error.method, 'deleteMessage');
 			assert.equal(error.code, 400);
+			assert.equal(error.parameters.migrateToChatId, 43);
 			assert.match(error.message, /message to delete not found/);
 
 			return true;
@@ -180,13 +189,31 @@ describe('API calls', () => {
 	});
 });
 
+describe('Key conversion', () => {
+	it('converts keys but keeps values as sent by Telegram', async () => {
+		const { bot } = await setup(() =>
+			ok({
+				url: '',
+				has_custom_certificate: false,
+				pending_update_count: 0,
+				allowed_updates: ['message', 'chat_member'],
+			}),
+		);
+
+		const info = await bot.getWebhookInfo();
+
+		assert.equal(info.hasCustomCertificate, false);
+		assert.deepEqual(info.allowedUpdates, ['message', 'chat_member']);
+	});
+});
+
 describe('Updates', () => {
 	it('dispatches webhook updates to typed listeners', async () => {
 		const { bot } = await setup(() => ok(true));
 		const received: string[] = [];
 
 		bot.on(UpdateType.Message, async (msg, update) => {
-			received.push(`${update.update_id}:${msg.text}`);
+			received.push(`${update.updateId}:${msg.text}`);
 		});
 
 		await bot.processUpdate(
@@ -203,6 +230,30 @@ describe('Updates', () => {
 		);
 
 		assert.deepEqual(received, ['1:a', '2:b', '3:c']);
+	});
+
+	it('dispatches multi-word update types', async () => {
+		const { bot } = await setup(() => ok(true));
+		const received: string[] = [];
+
+		bot.on(UpdateType.CallbackQuery, (query, update) => {
+			received.push(`${update.updateId}:${query.data}`);
+		});
+
+		await bot.processUpdate(
+			{
+				update_id: 1,
+				callback_query: {
+					id: '1',
+					from: { id: 42, is_bot: false, first_name: 'Bunny' },
+					chat_instance: '1',
+					data: 'hop',
+				},
+			},
+			headers,
+		);
+
+		assert.deepEqual(received, ['1:hop']);
 	});
 
 	it('supports once and off', async () => {
@@ -308,7 +359,7 @@ describe('Updates', () => {
 });
 
 describe('Polling', () => {
-	function pollingHandler(batches: Update[][]): {
+	function pollingHandler(batches: WireUpdate[][]): {
 		handler: ApiHandler;
 		maxInFlight: () => number;
 	} {
@@ -358,7 +409,10 @@ describe('Polling', () => {
 			});
 		});
 
-		await bot.startPolling({ timeout: 1 });
+		await bot.startPolling({
+			timeout: 1,
+			allowedUpdates: ['message', 'callback_query'],
+		});
 		assert.equal(bot.isPolling, true);
 
 		await done;
@@ -371,6 +425,10 @@ describe('Polling', () => {
 		assert.deepEqual(received, ['a', 'b', 'c']);
 		assert.equal(maxInFlight(), 1);
 		assert.equal(methods[0], 'deleteWebhook');
+		assert.deepEqual(telegram.requests[1].params.allowed_updates, [
+			'message',
+			'callback_query',
+		]);
 		assert.deepEqual(last.params, { offset: 4, limit: 1, timeout: 0 });
 	});
 
