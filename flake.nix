@@ -21,7 +21,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
 
           tools = [
-            pkgs.nodejs
+            pkgs.nodejs_24
 
             pkgs.nixd
             pkgs.nil

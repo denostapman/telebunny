@@ -5,7 +5,7 @@
 Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.telegram.org/bots/api).
 
 [![Bot API Version](https://img.shields.io/badge/Bot%20API-v10.3-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
-[![Node Version](https://img.shields.io/badge/Node-v24.21+-brightgreen.svg)](https://nodejs.org/)
+[![Node Version](https://img.shields.io/badge/Node-v24.22.1+-brightgreen.svg)](https://nodejs.org/)
 [![NPM Package Version](https://img.shields.io/npm/v/telebunny.svg)](https://www.npmjs.com/package/telebunny)
 
 </div>
