@@ -22,24 +22,24 @@ npm i telebunny
 import { TeleBunny, ParseMode, UpdateType } from 'telebunny';
 
 const bot = new TeleBunny('<TOKEN>', {
-	// Listener and polling errors end up here (defaults to console.error)
-	onError: (error) => console.error(error),
+  // Listener and polling errors end up here (defaults to console.error)
+  onError: (error) => console.error(error),
 });
 
 // Listeners can use string or typed format
 bot.on(UpdateType.Message, async (msg) => {
-	// Required parameters are positional, the rest go into the options object
-	await bot.sendMessage(msg.chat.id, '<b>Got message update</b>', {
-		parseMode: ParseMode.HTML,
-		replyParameters: { messageId: msg.messageId },
-	});
+  // Required parameters are positional, the rest go into the options object
+  await bot.sendMessage(msg.chat.id, '<b>Got message update</b>', {
+    parseMode: ParseMode.HTML,
+    replyParameters: { messageId: msg.messageId },
+  });
 });
 bot.on('callback_query', (query) => bot.answerCallbackQuery(query.id));
 
 // Long polling: one request in flight, updates are queued and handled in order
 await bot.startPolling({
-	timeout: 30,
-	allowedUpdates: ['message', 'callback_query'],
+  timeout: 30,
+  allowedUpdates: ['message', 'callback_query'],
 });
 
 // Stops polling and waits for running listeners
@@ -53,41 +53,40 @@ import { TeleBunny } from 'telebunny';
 import { createServer } from 'node:http';
 
 const bot = new TeleBunny('<TOKEN>', {
-	// Checked on every webhook request. Without it, setWebhook generates a secret by itself
-	webhookSecret: process.env.WEBHOOK_SECRET,
+  // Checked on every webhook request. Without it, setWebhook generates a secret by itself
+  webhookSecret: process.env.WEBHOOK_SECRET,
 });
 
 bot.on('inline_query', async (query) => {
-	await bot.answerInlineQuery(query.id, [], {
-		button: {
-			text: `Search "${query.query}" in Google`,
-			webApp: {
-				url:
-					'https://www.google.com/search?q=' +
-					encodeURIComponent(query.query),
-			},
-		},
-	});
+  await bot.answerInlineQuery(query.id, [], {
+    button: {
+      text: `Search "${query.query}" in Google`,
+      webApp: {
+        url:
+          'https://www.google.com/search?q=' + encodeURIComponent(query.query),
+      },
+    },
+  });
 });
 
 await bot.setWebhook('<WEBHOOK_URL>/webhook');
 
 createServer(async (req, res) => {
-	if (req.method !== 'POST' || req.url !== '/webhook') {
-		return res.writeHead(404).end();
-	}
+  if (req.method !== 'POST' || req.url !== '/webhook') {
+    return res.writeHead(404).end();
+  }
 
-	const chunks: Buffer[] = [];
+  const chunks: Buffer[] = [];
 
-	for await (const chunk of req) chunks.push(chunk);
+  for await (const chunk of req) chunks.push(chunk);
 
-	try {
-		// Resolves after all listeners ran
-		await bot.processUpdate(Buffer.concat(chunks), req.headers);
-		res.writeHead(200).end();
-	} catch {
-		res.writeHead(403).end();
-	}
+  try {
+    // Resolves after all listeners ran
+    await bot.processUpdate(Buffer.concat(chunks), req.headers);
+    res.writeHead(200).end();
+  } catch {
+    res.writeHead(403).end();
+  }
 }).listen(process.env.PORT || 3000);
 ```
 
@@ -101,8 +100,8 @@ import { InputFile } from 'telebunny';
 await bot.sendPhoto(chatId, new InputFile('./cat.jpg'));
 await bot.sendDocument(chatId, new InputFile(buffer, 'report.pdf'));
 await bot.sendMediaGroup(chatId, [
-	{ type: 'photo', media: new InputFile('./a.jpg') },
-	{ type: 'photo', media: '<file_id>' },
+  { type: 'photo', media: new InputFile('./a.jpg') },
+  { type: 'photo', media: '<file_id>' },
 ]);
 ```
 
