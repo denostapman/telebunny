@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { TeleBunnyError, TelegramError } from '../errors.ts';
-import { camelKeys, isPlainObject, snakeKeys } from './case.ts';
+import { camelKeys, isPlainObject, snakeKey } from './case.ts';
 import {
 	BodyType,
 	HttpClient,
@@ -64,7 +64,9 @@ export class TelegramApi {
 			ParamsOf<M> | undefined,
 			CallOptions | undefined,
 		];
-		const body = await toRequestBody(snakeKeys(params ?? {}) as object);
+		const body = await toRequestBody(
+			(params ?? {}) as Record<string, unknown>,
+		);
 
 		for (let attempt = 0; ; attempt++) {
 			const response = await this.#post(method, body, options);
@@ -129,11 +131,15 @@ function isApiResponse(value: unknown): value is ApiResponse {
 	);
 }
 
-async function toRequestBody(params: object): Promise<RequestBody> {
+async function toRequestBody(
+	params: Record<string, unknown>,
+): Promise<RequestBody> {
 	const files = new Map<string, InputFile>();
-	const fields: [string, unknown][] = [];
+	const fields: Record<string, unknown> = {};
 
-	const attach = (value: unknown): unknown => {
+	const convert = (value: unknown): unknown => {
+		if (typeof value !== 'object' || value === null) return value;
+
 		if (value instanceof InputFile) {
 			const name = `file${files.size}`;
 
@@ -142,27 +148,40 @@ async function toRequestBody(params: object): Promise<RequestBody> {
 			return `attach://${name}`;
 		}
 
-		if (Array.isArray(value)) return value.map(attach);
-		if (isPlainObject(value)) {
-			return Object.fromEntries(
-				Object.entries(value).map(([key, item]) => [key, attach(item)]),
-			);
+		if (Array.isArray(value)) {
+			const result = new Array<unknown>(value.length);
+
+			for (let i = 0; i < value.length; i++) {
+				result[i] = convert(value[i]);
+			}
+
+			return result;
 		}
 
-		return value;
+		if (!isPlainObject(value)) return value;
+
+		const result: Record<string, unknown> = {};
+
+		for (const key in value) result[snakeKey(key)] = convert(value[key]);
+
+		return result;
 	};
 
-	for (const [key, value] of Object.entries(params)) {
+	for (const key in params) {
+		const value = params[key];
+
 		if (value === undefined) continue;
-		if (value instanceof InputFile) files.set(key, value);
-		else fields.push([key, attach(value)]);
+		if (value instanceof InputFile) files.set(snakeKey(key), value);
+		else fields[snakeKey(key)] = convert(value);
 	}
 
-	if (files.size === 0) return { type: BodyType.Json, data: params };
+	if (files.size === 0) return { type: BodyType.Json, data: fields };
 
 	const form = new FormData();
 
-	for (const [key, value] of fields) {
+	for (const key in fields) {
+		const value = fields[key];
+
 		form.append(
 			key,
 			typeof value === 'object' && value !== null

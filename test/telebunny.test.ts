@@ -18,6 +18,7 @@ import {
 	type ApiHandler,
 	type FakeTelegram,
 } from './fake-telegram.ts';
+import { deepFreeze } from './utils/freeze.ts';
 
 const SECRET = 'test-secret';
 const headers = { 'x-telegram-bot-api-secret-token': SECRET };
@@ -283,6 +284,54 @@ describe('Key conversion', () => {
 		assert.equal(info.hasCustomCertificate, false);
 		assert.deepEqual(info.allowedUpdates, ['message', 'chat_member']);
 	});
+
+	it('converts nested parameters without mutating them', async () => {
+		const { bot, telegram } = await setup(() => ok(message('hi')));
+		const options = deepFreeze({
+			chatId: 42,
+			disableNotification: undefined,
+			replyMarkup: {
+				inlineKeyboard: [[{ text: 'a', callbackData: 'b_c' }]],
+			},
+		});
+
+		await bot.sendMessage('hi', options);
+
+		assert.deepEqual(telegram.requests[0].params, {
+			chat_id: 42,
+			text: 'hi',
+			reply_markup: {
+				inline_keyboard: [[{ text: 'a', callback_data: 'b_c' }]],
+			},
+		});
+		assert.deepEqual(Object.keys(options.replyMarkup), ['inlineKeyboard']);
+	});
+
+	it('converts keys next to nested InputFile values', async () => {
+		const { bot, telegram } = await setup(() => ok([]));
+		const media = new InputFile(Buffer.from('a'), 'a.jpg');
+
+		await bot.sendMediaGroup(42, [
+			{
+				type: InputMediaType.Photo,
+				media,
+				parseMode: ParseMode.HTML,
+				showCaptionAboveMedia: true,
+			},
+		]);
+
+		const [request] = telegram.requests;
+
+		assert.deepEqual(JSON.parse(request.params.media as string), [
+			{
+				type: 'photo',
+				media: 'attach://file0',
+				parse_mode: 'HTML',
+				show_caption_above_media: true,
+			},
+		]);
+		assert.equal(request.files.file0.content, 'a');
+	});
 });
 
 describe('Updates', () => {
@@ -308,6 +357,22 @@ describe('Updates', () => {
 		);
 
 		assert.deepEqual(received, ['1:a', '2:b', '3:c']);
+	});
+
+	it('does not mutate parsed webhook bodies', async () => {
+		const { bot } = await setup(() => ok(true));
+		const body = { update_id: 1, message: message('a') };
+		const snapshot = structuredClone(body);
+		let messageId: number | undefined;
+
+		bot.on(UpdateType.Message, (msg) => {
+			messageId = msg.messageId;
+		});
+
+		await bot.processUpdate(body, headers);
+
+		assert.equal(messageId, 1);
+		assert.deepEqual(body, snapshot);
 	});
 
 	it('dispatches multi-word update types', async () => {
