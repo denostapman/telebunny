@@ -47,6 +47,11 @@ export class BotApi {
 		return this.api.call(method, ...args);
 	}
 
+	/** Use this method to receive incoming updates using long polling. Returns an Array of Update objects. Prefer `startPolling()`, which calls this method in a loop and dispatches updates to listeners. */
+	getUpdates(options?: ParamsOf<'getUpdates'>) {
+		return this.call('getUpdates', options);
+	}
+
 	/**
 	 * Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized Update. In case of an unsuccessful request (a request with response HTTP status code different from `2XY`), we will repeat the request and give up after a reasonable amount of attempts. Returns True on success. If you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter secretToken. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
 	 *

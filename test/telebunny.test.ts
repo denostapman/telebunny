@@ -92,6 +92,22 @@ describe('API calls', () => {
 		assert.equal((await bot.getMe()).firstName, 'Bunny');
 	});
 
+	it('fetches updates manually with getUpdates', async () => {
+		const { bot, telegram } = await setup(() => ok(updates('a')));
+
+		const [update] = await bot.getUpdates({
+			offset: 5,
+			allowedUpdates: [UpdateType.Message],
+		});
+
+		assert.equal(update.updateId, 1);
+		assert.equal(update.message?.text, 'a');
+		assert.deepEqual(telegram.requests[0].params, {
+			offset: 5,
+			allowed_updates: ['message'],
+		});
+	});
+
 	it('rejects with TelegramError on failed requests', async () => {
 		const { bot } = await setup(() =>
 			fail(400, 'Bad Request: message to delete not found', {

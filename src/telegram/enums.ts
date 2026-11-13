@@ -181,6 +181,7 @@ export const InlineQueryResultType = {
 	Audio: 'audio',
 	Document: 'document',
 	Gif: 'gif',
+	Mpeg4Gif: 'mpeg4_gif',
 	Photo: 'photo',
 	Sticker: 'sticker',
 	Video: 'video',

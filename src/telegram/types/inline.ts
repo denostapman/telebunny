@@ -37,6 +37,7 @@ export type InlineQueryResult =
 	| InlineQueryResultCachedAudio
 	| InlineQueryResultCachedDocument
 	| InlineQueryResultCachedGif
+	| InlineQueryResultCachedMpeg4Gif
 	| InlineQueryResultCachedPhoto
 	| InlineQueryResultCachedSticker
 	| InlineQueryResultCachedVideo
@@ -48,6 +49,7 @@ export type InlineQueryResult =
 	| InlineQueryResultDocument
 	| InlineQueryResultGif
 	| InlineQueryResultLocation
+	| InlineQueryResultMpeg4Gif
 	| InlineQueryResultPhoto
 	| InlineQueryResultVenue
 	| InlineQueryResultVideo
@@ -140,6 +142,40 @@ export interface InlineQueryResultGif {
 	/** Inline keyboard attached to the message */
 	replyMarkup?: InlineKeyboardMarkup;
 	/** Content of the message to be sent instead of the GIF animation */
+	inputMessageContent?: InputMessageContent;
+}
+
+/** Represents a link to a video animation (H.264/MPEG-4 AVC video without sound). By default, this animated MPEG-4 file will be sent by the user with optional caption. Alternatively, you can use inputMessageContent to send a message with the specified content instead of the animation. */
+export interface InlineQueryResultMpeg4Gif {
+	/** Type of the result, must be mpeg4_gif */
+	type: 'mpeg4_gif';
+	/** Unique identifier for this result, 1-64 bytes */
+	id: string;
+	/** A valid URL for the MPEG4 file */
+	mpeg4Url: string;
+	/** Video width */
+	mpeg4Width?: number;
+	/** Video height */
+	mpeg4Height?: number;
+	/** Video duration in seconds */
+	mpeg4Duration?: number;
+	/** URL of the static (JPEG or GIF) or animated (MPEG4) thumbnail for the result */
+	thumbnailUrl: string;
+	/** MIME type of the thumbnail, must be one of “image/jpeg”, “image/gif”, or “video/mp4”. Defaults to “image/jpeg”. */
+	thumbnailMimeType?: 'image/jpeg' | 'image/gif' | 'video/mp4';
+	/** Title for the result */
+	title?: string;
+	/** Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing */
+	caption?: string;
+	/** Mode for parsing entities in the caption. See formatting options for more details. */
+	parseMode?: ParseMode;
+	/** List of special entities that appear in the caption, which can be specified instead of parseMode */
+	captionEntities?: MessageEntity[];
+	/** Pass True if the caption must be shown above the message media */
+	showCaptionAboveMedia?: boolean;
+	/** Inline keyboard attached to the message */
+	replyMarkup?: InlineKeyboardMarkup;
+	/** Content of the message to be sent instead of the video animation */
 	inputMessageContent?: InputMessageContent;
 }
 
@@ -412,6 +448,30 @@ export interface InlineQueryResultCachedGif {
 	/** Inline keyboard attached to the message */
 	replyMarkup?: InlineKeyboardMarkup;
 	/** Content of the message to be sent instead of the GIF animation */
+	inputMessageContent?: InputMessageContent;
+}
+
+/** Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use inputMessageContent to send a message with the specified content instead of the animation. */
+export interface InlineQueryResultCachedMpeg4Gif {
+	/** Type of the result, must be mpeg4_gif */
+	type: 'mpeg4_gif';
+	/** Unique identifier for this result, 1-64 bytes */
+	id: string;
+	/** A valid file identifier for the MPEG4 file */
+	mpeg4FileId: string;
+	/** Title for the result */
+	title?: string;
+	/** Caption of the MPEG-4 file to be sent, 0-1024 characters after entities parsing */
+	caption?: string;
+	/** Mode for parsing entities in the caption. See formatting options for more details. */
+	parseMode?: ParseMode;
+	/** List of special entities that appear in the caption, which can be specified instead of parseMode */
+	captionEntities?: MessageEntity[];
+	/** Pass True if the caption must be shown above the message media */
+	showCaptionAboveMedia?: boolean;
+	/** Inline keyboard attached to the message */
+	replyMarkup?: InlineKeyboardMarkup;
+	/** Content of the message to be sent instead of the video animation */
 	inputMessageContent?: InputMessageContent;
 }
 
