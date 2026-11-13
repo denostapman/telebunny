@@ -1,6 +1,6 @@
 {
 	"name": "telebunny",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Lightweight zero-dependency Node.js module for Telegram Bot API",
 	"exports": {
 		".": {
@@ -25,7 +25,8 @@
 		"telegram bunny",
 		"bunny",
 		"bot",
-		"api"
+		"api",
+		"typescript"
 	],
 	"files": [
 		"lib"
@@ -33,7 +34,7 @@
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/FBFunnyBunnyFB/telebunny.git"
+		"url": "git+https://github.com/denostapman/telebunny.git"
 	},
 	"author": "Funny Bunny",
 	"license": "MIT",

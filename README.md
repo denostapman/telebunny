@@ -10,6 +10,15 @@ Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.t
 
 </div>
 
+## ✨ Features
+
+- No dependencies, only Node.js built-ins
+- Idiomatic JavaScript API: camelCase names, positional required parameters and an options object for the rest. Telegram's snake_case is converted under the hood
+- TypeScript types for every Bot API method, object and update
+- Long polling handles updates in order and waits for running listeners on stop
+- Webhook requests are verified with a secret token, generated automatically if you don't set one
+- Requests rejected with 429 are retried after the delay Telegram asks for
+
 ## 📥 Installation
 
 ```sh
@@ -116,4 +125,4 @@ Flood-control errors (429) are handled automatically and resent after `retryAfte
 
 ## 🔑 License
 
-**The MIT License (MIT)**
+[MIT](LICENSE.md)
