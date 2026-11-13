@@ -37,12 +37,12 @@ export class HttpClient {
 		body: RequestBody,
 		options: RequestOptions = {},
 	): Promise<HttpResponse> {
-		const signals = [AbortSignal.timeout(options.timeout ?? this.#timeout)];
-		if (options.signal) signals.push(options.signal);
-
+		const timeout = AbortSignal.timeout(options.timeout ?? this.#timeout);
 		const response = await fetch(url, {
 			method: 'POST',
-			signal: AbortSignal.any(signals),
+			signal: options.signal
+				? AbortSignal.any([timeout, options.signal])
+				: timeout,
 			...HttpClient.#encode(body),
 		});
 		const text = await response.text();

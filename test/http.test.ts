@@ -112,4 +112,15 @@ describe('HttpClient', () => {
 
 		await assert.rejects(request, { name: 'AbortError' });
 	});
+
+	it('aborts requests after the timeout when a signal is given', async () => {
+		await assert.rejects(
+			new HttpClient({ timeout: 50 }).post(
+				`${url}/slow`,
+				{ type: BodyType.Json, data: {} },
+				{ signal: new AbortController().signal },
+			),
+			{ name: 'TimeoutError' },
+		);
+	});
 });
