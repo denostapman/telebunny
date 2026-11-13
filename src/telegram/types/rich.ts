@@ -105,6 +105,7 @@ export type RichText =
 	| RichTextEmailAddress
 	| RichTextPhoneNumber
 	| RichTextBankCardNumber
+	| RichTextTonAddress
 	| RichTextMention
 	| RichTextHashtag
 	| RichTextCashtag
@@ -265,6 +266,16 @@ export interface RichTextBankCardNumber {
 	text: RichText;
 	/** The bank card number */
 	bankCardNumber: string;
+}
+
+/** An address in the TON blockchain. */
+export interface RichTextTonAddress {
+	/** Type of the rich text, always “ton_address” */
+	type: 'ton_address';
+	/** Text of the address */
+	text: RichText;
+	/** The address */
+	address: string;
 }
 
 /** A mention by a username. */

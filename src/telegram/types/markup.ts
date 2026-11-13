@@ -102,7 +102,7 @@ export interface KeyboardButtonRequestManagedBot {
 	requestId: number;
 	/** Suggested name for the bot */
 	suggestedName?: string;
-	/** Suggested username for the bot */
+	/** Suggested username for the bot. The username must end with “bot”. If the user creating the bot has a Telegram Premium subscription, then the username can also end with “agent”, “ai”, “app”, “game”, or “gay”; in this case, the username will be assigned to the bot as a secondary username, and a regular username ending with “bot” will be assigned to the bot automatically. */
 	suggestedUsername?: string;
 }
 
@@ -140,7 +140,7 @@ export interface InlineKeyboardButton {
 	url?: string;
 	/** Data to be sent in a callback query to the bot when the button is pressed, 1-64 bytes */
 	callbackData?: string;
-	/** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a business account. */
+	/** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a business account and ephemeral messages. */
 	webApp?: WebAppInfo;
 	/** An HTTPS URL used to automatically authorize the user. Can be used as a replacement for the Telegram Login Widget. Not supported for ephemeral messages. */
 	loginUrl?: LoginUrl;

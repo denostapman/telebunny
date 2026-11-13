@@ -67,7 +67,8 @@ describe('API calls', () => {
 	it('sends positional and optional parameters as snake_case JSON', async () => {
 		const { bot, telegram } = await setup(() => ok(message('hi')));
 
-		const result = await bot.sendMessage(42, 'hi', {
+		const result = await bot.sendMessage('hi', {
+			chatId: 42,
 			parseMode: ParseMode.HTML,
 			replyParameters: { messageId: 7 },
 		});
@@ -156,7 +157,7 @@ describe('API calls', () => {
 	it('keeps string files as file_id/URL without reading the disk', async () => {
 		const { bot, telegram } = await setup(() => ok(message('')));
 
-		await bot.sendPhoto(42, './package.json');
+		await bot.sendPhoto('./package.json', { chatId: 42 });
 
 		assert.equal(telegram.requests[0].contentType, 'application/json');
 		assert.equal(telegram.requests[0].params.photo, './package.json');
@@ -166,9 +167,11 @@ describe('API calls', () => {
 		const { bot, telegram } = await setup(() => ok(message('')));
 
 		await bot.sendDocument(
-			42,
 			new InputFile(Buffer.from('hello'), 'hello.txt'),
-			{ caption: 'doc' },
+			{
+				chatId: 42,
+				caption: 'doc',
+			},
 		);
 
 		const [request] = telegram.requests;
@@ -202,6 +205,65 @@ describe('API calls', () => {
 		]);
 		assert.equal(request.files.file0.filename, 'package.json');
 		assert.match(request.files.file0.content, /"name": "telebunny"/);
+	});
+
+	it('omits chat_id for ephemeral replies to callback queries', async () => {
+		const { bot, telegram } = await setup(() => ok(message('')));
+		const ephemeralMessageParameters = { callbackQueryId: 'query' };
+
+		await bot.sendMessage('hi', { ephemeralMessageParameters });
+		await bot.sendDocument(
+			new InputFile(Buffer.from('hello'), 'hello.txt'),
+			{
+				ephemeralMessageParameters,
+			},
+		);
+
+		const [json, form] = telegram.requests;
+
+		assert.deepEqual(json.params, {
+			text: 'hi',
+			ephemeral_message_parameters: { callback_query_id: 'query' },
+		});
+		assert.deepEqual(form.params, {
+			ephemeral_message_parameters: '{"callback_query_id":"query"}',
+		});
+	});
+
+	it('sends widgets and answers widget queries', async () => {
+		const { bot, telegram } = await setup(({ method }) =>
+			ok(method === 'sendWidget' ? message('') : true),
+		);
+
+		await bot.sendWidget(42, '<b>widget</b>', {
+			publicData: '{}',
+			allowQueries: true,
+		});
+		await bot.answerWidgetQuery('query', { data: 'pong' });
+		await bot.editSharedWidgetData('widget', '', { cacheTime: 5 });
+
+		assert.deepEqual(
+			telegram.requests.map(({ method, params }) => [method, params]),
+			[
+				[
+					'sendWidget',
+					{
+						chat_id: 42,
+						html: '<b>widget</b>',
+						public_data: '{}',
+						allow_queries: true,
+					},
+				],
+				[
+					'answerWidgetQuery',
+					{ widget_query_id: 'query', data: 'pong' },
+				],
+				[
+					'editSharedWidgetData',
+					{ widget_id: 'widget', public_data: '', cache_time: 5 },
+				],
+			],
+		);
 	});
 });
 
@@ -270,6 +332,42 @@ describe('Updates', () => {
 		);
 
 		assert.deepEqual(received, ['1:hop']);
+	});
+
+	it('dispatches widget queries with converted nested keys', async () => {
+		const { bot } = await setup(() => ok(true));
+		const received: unknown[] = [];
+
+		bot.on(UpdateType.WidgetQuery, (query) => {
+			if (query.type.type === 'sign_data') {
+				received.push(query.widgetId, query.type.wallet.publicKey);
+			}
+		});
+
+		await bot.processUpdate(
+			{
+				update_id: 1,
+				widget_query: {
+					id: '1',
+					from: { id: 42, is_bot: false, first_name: 'Bunny' },
+					chat_instance: '1',
+					type: {
+						type: 'sign_data',
+						wallet: {
+							address: 'EQ',
+							amount: '0',
+							public_key: 'ab',
+						},
+						sign_data: '{}',
+					},
+					data: 'ping',
+					widget_id: 'widget',
+				},
+			},
+			headers,
+		);
+
+		assert.deepEqual(received, ['widget', 'ab']);
 	});
 
 	it('supports once and off', async () => {

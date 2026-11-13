@@ -4,9 +4,15 @@ import type {
 	BusinessLocation,
 	BusinessOpeningHours,
 } from './business.ts';
-import type { AcceptedGiftTypes, UniqueGiftColors } from './gift.ts';
+import type {
+	AcceptedGiftTypes,
+	UniqueGift,
+	UniqueGiftBackdropColors,
+	UniqueGiftColors,
+} from './gift.ts';
 import type { Audio, Location } from './media.ts';
 import type { Message, ReactionType } from './message.ts';
+import type { TonWalletCard } from './ton.ts';
 
 /** This object represents a Telegram user or bot. */
 export interface User {
@@ -176,6 +182,66 @@ export interface ChatFullInfo {
 	guardBot?: User;
 	/** The Community to which the chat belongs */
 	community?: Community;
+	/** For private chats, the TON wallet card of the user, which is shown on their profile page */
+	tonWalletCard?: TonWalletCard;
+	/** For private chats, supergroups and channels, the theme of the screen for sharing a link to the user or the chat; omitted if the default theme is used */
+	shareTheme?: ChatShareTheme;
+}
+
+/** This object describes the theme of the screen for sharing a link to a user or a chat. Currently, it can be one of */
+export type ChatShareTheme = ChatShareThemeEmoji | ChatShareThemeUniqueGift;
+
+/** The theme with emoji placed on a background. */
+export interface ChatShareThemeEmoji {
+	/** Type of the theme, always “emoji” */
+	type: 'emoji';
+	/** The emoji; 0-6 regular or custom emoji */
+	emojis: EmojiType[];
+	/** Identifier of the backdrop used as the background; omitted if the default background is used. Use getChatShareThemeBackdrops to get details about the backdrop. */
+	backgroundBackdropId?: number;
+}
+
+/** The theme based on a unique gift owned by the user or the chat. */
+export interface ChatShareThemeUniqueGift {
+	/** Type of the theme, always “unique_gift” */
+	type: 'unique_gift';
+	/** The gift */
+	gift: UniqueGift;
+}
+
+/** This object describes a backdrop, which can be used as the background of a theme of the screen for sharing a link to a user or a chat. */
+export interface ChatShareThemeBackdrop {
+	/** Unique identifier of the backdrop */
+	id: number;
+	/** Name of the backdrop */
+	name: string;
+	/** Colors of the backdrop */
+	colors: UniqueGiftBackdropColors;
+}
+
+/** This object contains a list of backdrops, which can be used as the background of a theme of the screen for sharing a link to a user or a chat. */
+export interface ChatShareThemeBackdrops {
+	/** The list of backdrops */
+	backdrops: ChatShareThemeBackdrop[];
+}
+
+/** This object describes an emoji. Currently, it can be one of */
+export type EmojiType = EmojiTypeEmoji | EmojiTypeCustomEmoji;
+
+/** A regular emoji. */
+export interface EmojiTypeEmoji {
+	/** Type of the emoji, always “emoji” */
+	type: 'emoji';
+	/** The emoji */
+	emoji: string;
+}
+
+/** A custom emoji. */
+export interface EmojiTypeCustomEmoji {
+	/** Type of the emoji, always “custom_emoji” */
+	type: 'custom_emoji';
+	/** Identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker. */
+	customEmojiId: string;
 }
 
 /** Describes a topic of a direct messages chat. */
@@ -399,7 +465,7 @@ export interface ChatMemberRestricted {
 	canSendVoiceNotes: boolean;
 	/** True, if the user is allowed to send polls and checklists */
 	canSendPolls: boolean;
-	/** True, if the user is allowed to send animations, games, stickers and use inline bots */
+	/** True, if the user is allowed to send animations, games, stickers, widgets and use inline bots */
 	canSendOtherMessages: boolean;
 	/** True, if the user is allowed to add web page previews to their messages */
 	canAddWebPagePreviews: boolean;
@@ -473,7 +539,7 @@ export interface ChatPermissions {
 	canSendVoiceNotes?: boolean;
 	/** True, if the user is allowed to send polls and checklists */
 	canSendPolls?: boolean;
-	/** True, if the user is allowed to send animations, games, stickers and use inline bots */
+	/** True, if the user is allowed to send animations, games, stickers, widgets and use inline bots */
 	canSendOtherMessages?: boolean;
 	/** True, if the user is allowed to add web page previews to their messages */
 	canAddWebPagePreviews?: boolean;

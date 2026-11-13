@@ -4,7 +4,7 @@
 
 Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.telegram.org/bots/api).
 
-[![Bot API Version](https://img.shields.io/badge/Bot%20API-v10.3-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
+[![Bot API Version](https://img.shields.io/badge/Bot%20API-v10.4-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
 [![Node Version](https://img.shields.io/badge/Node-v24.22.1+-brightgreen.svg)](https://nodejs.org/)
 [![NPM Package Version](https://img.shields.io/npm/v/telebunny.svg)](https://www.npmjs.com/package/telebunny)
 
@@ -29,12 +29,19 @@ const bot = new TeleBunny('<TOKEN>', {
 // Listeners can use string or typed format
 bot.on(UpdateType.Message, async (msg) => {
   // Required parameters are positional, the rest go into the options object
-  await bot.sendMessage(msg.chat.id, '<b>Got message update</b>', {
+  await bot.sendMessage('<b>Got message update</b>', {
+    chatId: msg.chat.id,
     parseMode: ParseMode.HTML,
     replyParameters: { messageId: msg.messageId },
   });
 });
-bot.on('callback_query', (query) => bot.answerCallbackQuery(query.id));
+bot.on('callback_query', async (query) => {
+  // Ephemeral reply, visible only to the user who pressed the button
+  await bot.sendMessage('Only you can see this', {
+    ephemeralMessageParameters: { callbackQueryId: query.id },
+  });
+  await bot.answerCallbackQuery(query.id);
+});
 
 // Long polling: one request in flight, updates are queued and handled in order
 await bot.startPolling({
@@ -97,8 +104,8 @@ Strings are sent as `file_id` or URL. Local files or binary data can be uploaded
 ```typescript
 import { InputFile } from 'telebunny';
 
-await bot.sendPhoto(chatId, new InputFile('./cat.jpg'));
-await bot.sendDocument(chatId, new InputFile(buffer, 'report.pdf'));
+await bot.sendPhoto(new InputFile('./cat.jpg'), { chatId });
+await bot.sendDocument(new InputFile(buffer, 'report.pdf'), { chatId });
 await bot.sendMediaGroup(chatId, [
   { type: 'photo', media: new InputFile('./a.jpg') },
   { type: 'photo', media: '<file_id>' },

@@ -26,6 +26,7 @@ import type {
 	PreCheckoutQuery,
 	ShippingQuery,
 } from './payment.ts';
+import type { SharedWidgetQuery, WidgetQuery } from './widget.ts';
 
 /** This object represents an incoming update. At most one of the optional fields can be present in any given update. */
 export interface Update {
@@ -59,6 +60,10 @@ export interface Update {
 	chosenInlineResult?: ChosenInlineResult;
 	/** New incoming callback query */
 	callbackQuery?: CallbackQuery;
+	/** New incoming query from a widget in a message sent by the bot or via the bot */
+	widgetQuery?: WidgetQuery;
+	/** New incoming query from a forwarded message with a shared widget */
+	sharedWidgetQuery?: SharedWidgetQuery;
 	/** New incoming shipping query. Only for invoices with flexible price. */
 	shippingQuery?: ShippingQuery;
 	/** New incoming pre-checkout query. Contains full information about checkout. */

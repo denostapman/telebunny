@@ -13,4 +13,6 @@ export type * from './payment.ts';
 export type * from './rich.ts';
 export type * from './sticker.ts';
 export type * from './story.ts';
+export type * from './ton.ts';
 export type * from './update.ts';
+export type * from './widget.ts';

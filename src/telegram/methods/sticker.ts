@@ -25,8 +25,8 @@ import type { Method } from './common.ts';
 export interface SendStickerParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */

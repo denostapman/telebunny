@@ -1,13 +1,13 @@
 import type { ParseMode } from '../enums.ts';
 import type { ChatId, EmptyObject } from '../types/common.ts';
-import type { Gifts, OwnedGifts } from '../types/gift.ts';
+import type { Gifts, OwnedGifts, UniqueGift } from '../types/gift.ts';
 import type { MessageEntity } from '../types/message.ts';
 import type { Method } from './common.ts';
 
 export interface SendGiftParams {
 	/** Required if chatId is not specified. Unique identifier of the target user who will receive the gift. */
 	userId?: number;
-	/** Required if userId is not specified. Unique identifier for the chat or username of the channel (in the format `@username`) that will receive the gift. */
+	/** Required if userId is not specified. Unique identifier for the chat that will receive the gift or username of the channel in the format `@username`. */
 	chatId?: ChatId;
 	/** Identifier of the gift; limited gifts can't be sent to channel chats */
 	giftId: string;
@@ -74,6 +74,18 @@ export interface ConvertGiftToStarsParams {
 	ownedGiftId: string;
 }
 
+export interface DeleteBusinessAccountGiftParams {
+	/** Unique identifier of the business connection */
+	businessConnectionId: string;
+	/** Unique identifier of the regular gift that should be deleted */
+	ownedGiftId: string;
+}
+
+export interface GetUniqueGiftParams {
+	/** Unique name of the gift */
+	name: string;
+}
+
 export interface UpgradeGiftParams {
 	/** Unique identifier of the business connection */
 	businessConnectionId: string;
@@ -105,8 +117,12 @@ export interface GiftMethods {
 	getUserGifts: Method<GetUserGiftsParams, OwnedGifts>;
 	/** Returns the gifts owned by a chat. Returns OwnedGifts on success. */
 	getChatGifts: Method<GetChatGiftsParams, OwnedGifts>;
+	/** Use this method to get information about a unique gift by its name. Returns a UniqueGift object on success. */
+	getUniqueGift: Method<GetUniqueGiftParams, UniqueGift>;
 	/** Converts a given regular gift to Telegram Stars. Requires the canConvertGiftsToStars business bot right. Returns True on success. */
 	convertGiftToStars: Method<ConvertGiftToStarsParams, true>;
+	/** Deletes a regular gift owned by a managed business account without receiving Telegram Stars for it. Requires the canConvertGiftsToStars business bot right. The gift can be deleted only if it isn't limited (the field totalCount of the Gift is omitted) and wasn't refunded. Returns True on success. */
+	deleteBusinessAccountGift: Method<DeleteBusinessAccountGiftParams, true>;
 	/** Upgrades a given regular gift to a unique gift. Requires the canTransferAndUpgradeGifts business bot right. Additionally requires the canTransferStars business bot right if the upgrade is paid. Returns True on success. */
 	upgradeGift: Method<UpgradeGiftParams, true>;
 	/** Transfers an owned unique gift to another user. Requires the canTransferAndUpgradeGifts business bot right. Requires canTransferStars business bot right if the transfer is paid. Returns True on success. */

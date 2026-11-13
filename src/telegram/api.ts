@@ -89,15 +89,10 @@ export class BotApi {
 	/**
 	 * Use this method to send text messages. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param text Text of the message to be sent, 1-4096 characters after entities parsing
 	 */
-	sendMessage(
-		chatId: ChatId,
-		text: string,
-		options?: Options<'sendMessage', 'chatId' | 'text'>,
-	) {
-		return this.call('sendMessage', { chatId, text, ...options });
+	sendMessage(text: string, options?: Options<'sendMessage', 'text'>) {
+		return this.call('sendMessage', { text, ...options });
 	}
 
 	/**
@@ -149,7 +144,7 @@ export class BotApi {
 	}
 
 	/**
-	 * Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
+	 * Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, invoice messages, and widget messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
 	 *
 	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param fromChatId Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or channel in the format `@username`)
@@ -170,7 +165,7 @@ export class BotApi {
 	}
 
 	/**
-	 * Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an Array of MessageId of the sent messages is returned.
+	 * Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, invoice messages, and widget messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an Array of MessageId of the sent messages is returned.
 	 *
 	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param fromChatId Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup or channel in the format `@username`)
@@ -196,32 +191,27 @@ export class BotApi {
 	/**
 	 * Use this method to send photos. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param photo Photo to send. Pass a fileId as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More information on Sending Files »
 	 */
 	sendPhoto(
-		chatId: ChatId,
 		photo: InputFile | string,
-		options?: Options<'sendPhoto', 'chatId' | 'photo'>,
+		options?: Options<'sendPhoto', 'photo'>,
 	) {
-		return this.call('sendPhoto', { chatId, photo, ...options });
+		return this.call('sendPhoto', { photo, ...options });
 	}
 
 	/**
 	 * Use this method to send live photos. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
 	 * @param livePhoto Live photo video to send. The video must be no longer than 10 seconds and must not exceed 10 MB in size. Pass a fileId as String to send a video that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending live photos by a URL is currently unsupported.
 	 * @param photo The static photo to send. Pass a fileId as String to send a photo that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending live photos by a URL is currently unsupported.
 	 */
 	sendLivePhoto(
-		chatId: ChatId,
 		livePhoto: InputFile | string,
 		photo: InputFile | string,
-		options?: Options<'sendLivePhoto', 'chatId' | 'livePhoto' | 'photo'>,
+		options?: Options<'sendLivePhoto', 'livePhoto' | 'photo'>,
 	) {
 		return this.call('sendLivePhoto', {
-			chatId,
 			livePhoto,
 			photo,
 			...options,
@@ -231,85 +221,73 @@ export class BotApi {
 	/**
 	 * Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice method instead.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param audio Audio file to send. Pass a fileId as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 	 */
 	sendAudio(
-		chatId: ChatId,
 		audio: InputFile | string,
-		options?: Options<'sendAudio', 'chatId' | 'audio'>,
+		options?: Options<'sendAudio', 'audio'>,
 	) {
-		return this.call('sendAudio', { chatId, audio, ...options });
+		return this.call('sendAudio', { audio, ...options });
 	}
 
 	/**
 	 * Use this method to send general files. On success, the sent Message is returned. Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param document File to send. Pass a fileId as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 	 */
 	sendDocument(
-		chatId: ChatId,
 		document: InputFile | string,
-		options?: Options<'sendDocument', 'chatId' | 'document'>,
+		options?: Options<'sendDocument', 'document'>,
 	) {
-		return this.call('sendDocument', { chatId, document, ...options });
+		return this.call('sendDocument', { document, ...options });
 	}
 
 	/**
 	 * Use this method to send video files, Telegram clients support MPEG4 videos (other formats may be sent as Document). On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param video Video to send. Pass a fileId as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More information on Sending Files »
 	 */
 	sendVideo(
-		chatId: ChatId,
 		video: InputFile | string,
-		options?: Options<'sendVideo', 'chatId' | 'video'>,
+		options?: Options<'sendVideo', 'video'>,
 	) {
-		return this.call('sendVideo', { chatId, video, ...options });
+		return this.call('sendVideo', { video, ...options });
 	}
 
 	/**
 	 * Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent Message is returned. Bots can currently send animation files of up to 50 MB in size, this limit may be changed in the future.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param animation Animation to send. Pass a fileId as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More information on Sending Files »
 	 */
 	sendAnimation(
-		chatId: ChatId,
 		animation: InputFile | string,
-		options?: Options<'sendAnimation', 'chatId' | 'animation'>,
+		options?: Options<'sendAnimation', 'animation'>,
 	) {
-		return this.call('sendAnimation', { chatId, animation, ...options });
+		return this.call('sendAnimation', { animation, ...options });
 	}
 
 	/**
 	 * Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param voice Audio file to send. Pass a fileId as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More information on Sending Files »
 	 */
 	sendVoice(
-		chatId: ChatId,
 		voice: InputFile | string,
-		options?: Options<'sendVoice', 'chatId' | 'voice'>,
+		options?: Options<'sendVoice', 'voice'>,
 	) {
-		return this.call('sendVoice', { chatId, voice, ...options });
+		return this.call('sendVoice', { voice, ...options });
 	}
 
 	/**
 	 * Use this method to send a rounded square MPEG4 video of up to 1 minute long. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param videoNote Video note to send. Pass a fileId as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More information on Sending Files ». Sending video notes by a URL is currently unsupported.
 	 */
 	sendVideoNote(
-		chatId: ChatId,
 		videoNote: InputFile | string,
-		options?: Options<'sendVideoNote', 'chatId' | 'videoNote'>,
+		options?: Options<'sendVideoNote', 'videoNote'>,
 	) {
-		return this.call('sendVideoNote', { chatId, videoNote, ...options });
+		return this.call('sendVideoNote', { videoNote, ...options });
 	}
 
 	/**
@@ -356,18 +334,15 @@ export class BotApi {
 	/**
 	 * Use this method to send point on the map. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param latitude Latitude of the location
 	 * @param longitude Longitude of the location
 	 */
 	sendLocation(
-		chatId: ChatId,
 		latitude: number,
 		longitude: number,
-		options?: Options<'sendLocation', 'chatId' | 'latitude' | 'longitude'>,
+		options?: Options<'sendLocation', 'latitude' | 'longitude'>,
 	) {
 		return this.call('sendLocation', {
-			chatId,
 			latitude,
 			longitude,
 			...options,
@@ -377,25 +352,22 @@ export class BotApi {
 	/**
 	 * Use this method to send information about a venue. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param latitude Latitude of the venue
 	 * @param longitude Longitude of the venue
 	 * @param title Name of the venue
 	 * @param address Address of the venue
 	 */
 	sendVenue(
-		chatId: ChatId,
 		latitude: number,
 		longitude: number,
 		title: string,
 		address: string,
 		options?: Options<
 			'sendVenue',
-			'chatId' | 'latitude' | 'longitude' | 'title' | 'address'
+			'latitude' | 'longitude' | 'title' | 'address'
 		>,
 	) {
 		return this.call('sendVenue', {
-			chatId,
 			latitude,
 			longitude,
 			title,
@@ -407,21 +379,15 @@ export class BotApi {
 	/**
 	 * Use this method to send phone contacts. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param phoneNumber Contact's phone number
 	 * @param firstName Contact's first name
 	 */
 	sendContact(
-		chatId: ChatId,
 		phoneNumber: string,
 		firstName: string,
-		options?: Options<
-			'sendContact',
-			'chatId' | 'phoneNumber' | 'firstName'
-		>,
+		options?: Options<'sendContact', 'phoneNumber' | 'firstName'>,
 	) {
 		return this.call('sendContact', {
-			chatId,
 			phoneNumber,
 			firstName,
 			...options,
@@ -1016,7 +982,7 @@ export class BotApi {
 	}
 
 	/**
-	 * Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the canManageTopics administrator right. Returns information about the created topic as a ForumTopic object.
+	 * Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the canManageTopics administrator right. In the case of a private chat, a link to the topic can be created in the format `https://t.me/<bot_username>/<message_thread_id>`; the link opens the topic only for the user. Returns information about the created topic as a ForumTopic object.
 	 *
 	 * @param chatId Unique identifier for the target chat or username of the target supergroup in the format `@username`
 	 * @param name Topic name, 1-128 characters
@@ -1383,6 +1349,11 @@ export class BotApi {
 		return this.call('verifyChat', { chatId, ...options });
 	}
 
+	/** Use this method to get the list of backdrops, which can be used as the background of a theme of the screen for sharing a link to a user or a chat. Requires no parameters. Returns a ChatShareThemeBackdrops object. */
+	getChatShareThemeBackdrops() {
+		return this.call('getChatShareThemeBackdrops');
+	}
+
 	/**
 	 * Removes verification from a user who is currently verified on behalf of the organization represented by the bot. Returns True on success.
 	 *
@@ -1603,6 +1574,15 @@ export class BotApi {
 	}
 
 	/**
+	 * Use this method to get information about a unique gift by its name. Returns a UniqueGift object on success.
+	 *
+	 * @param name Unique name of the gift
+	 */
+	getUniqueGift(name: string) {
+		return this.call('getUniqueGift', { name });
+	}
+
+	/**
 	 * Converts a given regular gift to Telegram Stars. Requires the canConvertGiftsToStars business bot right. Returns True on success.
 	 *
 	 * @param businessConnectionId Unique identifier of the business connection
@@ -1610,6 +1590,22 @@ export class BotApi {
 	 */
 	convertGiftToStars(businessConnectionId: string, ownedGiftId: string) {
 		return this.call('convertGiftToStars', {
+			businessConnectionId,
+			ownedGiftId,
+		});
+	}
+
+	/**
+	 * Deletes a regular gift owned by a managed business account without receiving Telegram Stars for it. Requires the canConvertGiftsToStars business bot right. The gift can be deleted only if it isn't limited (the field totalCount of the Gift is omitted) and wasn't refunded. Returns True on success.
+	 *
+	 * @param businessConnectionId Unique identifier of the business connection
+	 * @param ownedGiftId Unique identifier of the regular gift that should be deleted
+	 */
+	deleteBusinessAccountGift(
+		businessConnectionId: string,
+		ownedGiftId: string,
+	) {
+		return this.call('deleteBusinessAccountGift', {
 			businessConnectionId,
 			ownedGiftId,
 		});
@@ -2084,15 +2080,13 @@ export class BotApi {
 	/**
 	 * Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param sticker Sticker to send. Pass a fileId as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP sticker from the Internet, or upload a new .WEBP, .TGS, or .WEBM sticker using multipart/form-data. More information on Sending Files ». Video and animated stickers can't be sent via an HTTP URL.
 	 */
 	sendSticker(
-		chatId: ChatId,
 		sticker: InputFile | string,
-		options?: Options<'sendSticker', 'chatId' | 'sticker'>,
+		options?: Options<'sendSticker', 'sticker'>,
 	) {
-		return this.call('sendSticker', { chatId, sticker, ...options });
+		return this.call('sendSticker', { sticker, ...options });
 	}
 
 	/**
@@ -2306,16 +2300,13 @@ export class BotApi {
 	/**
 	 * Use this method to send rich messages. If the message contains a block with a media element, then the bot must have the right to send the media to the chat. On success, the sent Message is returned.
 	 *
-	 * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username`
 	 * @param richMessage The message to be sent
 	 */
 	sendRichMessage(
-		chatId: ChatId,
 		richMessage: InputRichMessage,
-		options?: Options<'sendRichMessage', 'chatId' | 'richMessage'>,
+		options?: Options<'sendRichMessage', 'richMessage'>,
 	) {
 		return this.call('sendRichMessage', {
-			chatId,
 			richMessage,
 			...options,
 		});
@@ -2341,6 +2332,69 @@ export class BotApi {
 			chatId,
 			draftId,
 			richMessage,
+			...options,
+		});
+	}
+
+	/**
+	 * Use this method to send a message with an HTML widget. Currently, in the production environment, widgets can be sent only to private chats, and sent widgets automatically have protected content and therefore can't be forwarded. On success, the sent Message is returned.
+	 *
+	 * @param chatId Unique identifier for the target chat or username of the target supergroup in the format `@username`
+	 * @param html HTML code of the widget, 1-32768 bytes. The code must not exceed 4096 bytes when compressed by zlib with the maximum compression level.
+	 */
+	sendWidget(
+		chatId: ChatId,
+		html: string,
+		options?: Options<'sendWidget', 'chatId' | 'html'>,
+	) {
+		return this.call('sendWidget', { chatId, html, ...options });
+	}
+
+	/**
+	 * Use this method to send again a shared widget created by the bot. Currently, in the production environment, widgets can be sent only to private chats, and sent widgets automatically have protected content and therefore can't be forwarded. On success, the sent Message is returned.
+	 *
+	 * @param chatId Unique identifier for the target chat or username of the target supergroup in the format `@username`
+	 * @param widgetId Unique identifier of the shared widget
+	 */
+	sendSharedWidget(
+		chatId: ChatId,
+		widgetId: string,
+		options?: Options<'sendSharedWidget', 'chatId' | 'widgetId'>,
+	) {
+		return this.call('sendSharedWidget', { chatId, widgetId, ...options });
+	}
+
+	/**
+	 * Use this method to send an answer to a query from a widget. The query must be answered within 15 seconds. The answer is received only by the widget that sent the query and doesn't change data of the widget; use editMessageWidgetData or editSharedWidgetData to change it. On success, True is returned.
+	 *
+	 * @param widgetQueryId Unique identifier for the query to be answered
+	 */
+	answerWidgetQuery(
+		widgetQueryId: string,
+		options?: Options<'answerWidgetQuery', 'widgetQueryId'>,
+	) {
+		return this.call('answerWidgetQuery', { widgetQueryId, ...options });
+	}
+
+	/** Use this method to edit data of a widget in a message sent by the bot or via the bot (for inline bots). Public data of a shared widget can be changed at most once per second. On success, True is returned. */
+	editMessageWidgetData(options?: ParamsOf<'editMessageWidgetData'>) {
+		return this.call('editMessageWidgetData', options);
+	}
+
+	/**
+	 * Use this method to edit public data of a shared widget created by the bot. A shared widget can be edited at most once per second. On success, True is returned.
+	 *
+	 * @param widgetId Unique identifier of the shared widget
+	 * @param publicData New public data of the widget, 0-1024 bytes; pass an empty string to remove the public data
+	 */
+	editSharedWidgetData(
+		widgetId: string,
+		publicData: string,
+		options?: Options<'editSharedWidgetData', 'widgetId' | 'publicData'>,
+	) {
+		return this.call('editSharedWidgetData', {
+			widgetId,
+			publicData,
 			...options,
 		});
 	}

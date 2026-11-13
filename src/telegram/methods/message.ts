@@ -37,8 +37,8 @@ import type { Method } from './common.ts';
 export interface SendMessageParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -176,8 +176,8 @@ export interface CopyMessagesParams {
 export interface SendPhotoParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -219,8 +219,8 @@ export interface SendPhotoParams {
 export interface SendLivePhotoParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target channel (in the format `@channelusername`) */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -264,8 +264,8 @@ export interface SendLivePhotoParams {
 export interface SendAudioParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -311,8 +311,8 @@ export interface SendAudioParams {
 export interface SendDocumentParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -354,8 +354,8 @@ export interface SendDocumentParams {
 export interface SendVideoParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -411,8 +411,8 @@ export interface SendVideoParams {
 export interface SendAnimationParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -462,8 +462,8 @@ export interface SendAnimationParams {
 export interface SendVoiceParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -503,8 +503,8 @@ export interface SendVoiceParams {
 export interface SendVideoNoteParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -612,8 +612,8 @@ export interface SendMediaGroupParams {
 export interface SendLocationParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -655,8 +655,8 @@ export interface SendLocationParams {
 export interface SendVenueParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -702,8 +702,8 @@ export interface SendVenueParams {
 export interface SendContactParams {
 	/** Unique identifier of the business connection on behalf of which the message will be sent */
 	businessConnectionId?: string;
-	/** Unique identifier for the target chat or username of the target bot, supergroup or channel in the format `@username` */
-	chatId: ChatId;
+	/** Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format `@username`; required unless the message is sent as an ephemeral reply to a callback query */
+	chatId?: ChatId;
 	/** Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only */
 	messageThreadId?: number;
 	/** Identifier of the direct messages topic to which the message will be sent; required if the message is sent to a direct messages chat */
@@ -1182,9 +1182,9 @@ export interface MessageMethods {
 	forwardMessage: Method<ForwardMessageParams, Message>;
 	/** Use this method to forward multiple messages of any kind. If some of the specified messages can't be found or forwarded, they are skipped. Service messages and messages with protected content can't be forwarded. Album grouping is kept for forwarded messages. On success, an Array of MessageId of the sent messages is returned. */
 	forwardMessages: Method<ForwardMessagesParams, MessageId[]>;
-	/** Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success. */
+	/** Use this method to copy messages of any kind. Service messages, paid media messages, giveaway messages, giveaway winners messages, invoice messages, and widget messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success. */
 	copyMessage: Method<CopyMessageParams, MessageId>;
-	/** Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, and invoice messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an Array of MessageId of the sent messages is returned. */
+	/** Use this method to copy messages of any kind. If some of the specified messages can't be found or copied, they are skipped. Service messages, paid media messages, giveaway messages, giveaway winners messages, invoice messages, and widget messages can't be copied. A quiz poll can be copied only if the value of the field correctOptionIds is known to the bot. The method is analogous to the method forwardMessages, but the copied messages don't have a link to the original message. Album grouping is kept for copied messages. On success, an Array of MessageId of the sent messages is returned. */
 	copyMessages: Method<CopyMessagesParams, MessageId[]>;
 	/** Use this method to send photos. On success, the sent Message is returned. */
 	sendPhoto: Method<SendPhotoParams, Message>;

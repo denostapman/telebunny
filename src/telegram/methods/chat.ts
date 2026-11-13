@@ -5,6 +5,7 @@ import type {
 	ChatInviteLink,
 	ChatMember,
 	ChatPermissions,
+	ChatShareThemeBackdrops,
 	ForumTopic,
 	UserChatBoosts,
 } from '../types/chat.ts';
@@ -447,6 +448,10 @@ export interface VerifyUserParams {
 	userId: number;
 	/** Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to provide a custom verification description. */
 	customDescription?: string;
+	/** Mode for parsing entities in the custom description. See formatting options for more details. Only “text_link” entities are supported. */
+	customDescriptionParseMode?: ParseMode;
+	/** A JSON-serialized list of special entities that appear in the custom description, which can be specified instead of customDescriptionParseMode. Only “text_link” entities are supported. */
+	customDescriptionEntities?: MessageEntity[];
 }
 
 export interface VerifyChatParams {
@@ -454,6 +459,10 @@ export interface VerifyChatParams {
 	chatId: ChatId;
 	/** Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to provide a custom verification description. */
 	customDescription?: string;
+	/** Mode for parsing entities in the custom description. See formatting options for more details. Only “text_link” entities are supported. */
+	customDescriptionParseMode?: ParseMode;
+	/** A JSON-serialized list of special entities that appear in the custom description, which can be specified instead of customDescriptionParseMode. Only “text_link” entities are supported. */
+	customDescriptionEntities?: MessageEntity[];
 }
 
 export interface RemoveUserVerificationParams {
@@ -550,7 +559,7 @@ export interface ChatMethods {
 	deleteChatStickerSet: Method<DeleteChatStickerSetParams, true>;
 	/** Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters. Returns an Array of Sticker objects. */
 	getForumTopicIconStickers: Method<EmptyObject, Sticker[]>;
-	/** Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the canManageTopics administrator right. Returns information about the created topic as a ForumTopic object. */
+	/** Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the canManageTopics administrator right. In the case of a private chat, a link to the topic can be created in the format `https://t.me/<bot_username>/<message_thread_id>`; the link opens the topic only for the user. Returns information about the created topic as a ForumTopic object. */
 	createForumTopic: Method<CreateForumTopicParams, ForumTopic>;
 	/** Use this method to edit name and icon of a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator in the chat for this to work and must have the canManageTopics administrator rights, unless it is the creator of the topic. Returns True on success. */
 	editForumTopic: Method<EditForumTopicParams, true>;
@@ -585,6 +594,8 @@ export interface ChatMethods {
 	verifyUser: Method<VerifyUserParams, true>;
 	/** Verifies a chat on behalf of the organization which is represented by the bot. Returns True on success. */
 	verifyChat: Method<VerifyChatParams, true>;
+	/** Use this method to get the list of backdrops, which can be used as the background of a theme of the screen for sharing a link to a user or a chat. Requires no parameters. Returns a ChatShareThemeBackdrops object. */
+	getChatShareThemeBackdrops: Method<EmptyObject, ChatShareThemeBackdrops>;
 	/** Removes verification from a user who is currently verified on behalf of the organization represented by the bot. Returns True on success. */
 	removeUserVerification: Method<RemoveUserVerificationParams, true>;
 	/** Removes verification from a chat that is currently verified on behalf of the organization represented by the bot. Returns True on success. */

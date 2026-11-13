@@ -11,6 +11,7 @@ import type { RichMethods } from './rich.ts';
 import type { StickerMethods } from './sticker.ts';
 import type { StoryMethods } from './story.ts';
 import type { UpdateMethods } from './update.ts';
+import type { WidgetMethods } from './widget.ts';
 
 export type * from './bot.ts';
 export type * from './business.ts';
@@ -25,6 +26,7 @@ export type * from './rich.ts';
 export type * from './sticker.ts';
 export type * from './story.ts';
 export type * from './update.ts';
+export type * from './widget.ts';
 
 export interface ApiMethods
 	extends
@@ -40,7 +42,8 @@ export interface ApiMethods
 		RichMethods,
 		StickerMethods,
 		StoryMethods,
-		UpdateMethods {}
+		UpdateMethods,
+		WidgetMethods {}
 
 export type ApiMethod = keyof ApiMethods;
 export type ParamsOf<M extends ApiMethod> = ApiMethods[M]['params'];

@@ -10,21 +10,24 @@ export interface Story {
 	id: number;
 }
 
-/** Describes the position of a clickable area within a story. */
-export interface StoryAreaPosition {
-	/** The abscissa of the area's center, as a percentage of the media width */
+/** Describes the position of a rectangle area on a story media or a TON wallet card. */
+export interface AreaPosition {
+	/** The abscissa of the area's center, as a percentage of the media or the card width */
 	xPercentage: number;
-	/** The ordinate of the area's center, as a percentage of the media height */
+	/** The ordinate of the area's center, as a percentage of the media or the card height */
 	yPercentage: number;
-	/** The width of the area's rectangle, as a percentage of the media width */
+	/** The width of the area's rectangle, as a percentage of the media or the card width */
 	widthPercentage: number;
-	/** The height of the area's rectangle, as a percentage of the media height */
+	/** The height of the area's rectangle, as a percentage of the media or the card height */
 	heightPercentage: number;
 	/** The clockwise rotation angle of the rectangle, in degrees; 0-360 */
 	rotationAngle: number;
-	/** The radius of the rectangle corner rounding, as a percentage of the media width */
+	/** The radius of the rectangle corner rounding, as a percentage of the media or the card width */
 	cornerRadiusPercentage: number;
 }
+
+/** @deprecated Renamed to AreaPosition in Bot API 10.4. */
+export type StoryAreaPosition = AreaPosition;
 
 /** Describes the physical address of a location. */
 export interface LocationAddress {
@@ -101,7 +104,7 @@ export interface StoryAreaTypeUniqueGift {
 /** Describes a clickable area on a story media. */
 export interface StoryArea {
 	/** Position of the area */
-	position: StoryAreaPosition;
+	position: AreaPosition;
 	/** Type of the area */
 	type: StoryAreaType;
 }
