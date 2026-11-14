@@ -59,6 +59,11 @@ const message = (text: string) => ({
 	text,
 });
 
+const chatUpdate = (id: number, chatId: number, text: string): WireUpdate => ({
+	update_id: id,
+	message: { ...message(text), chat: { id: chatId, type: 'private' } },
+});
+
 const updates = (...texts: string[]): WireUpdate[] =>
 	texts.map((text, i) => ({ update_id: i + 1, message: message(text) }));
 
@@ -394,6 +399,66 @@ describe('Updates', () => {
 		assert.deepEqual(body, snapshot);
 	});
 
+	it('orders webhook updates per updateKey', async () => {
+		const log: string[] = [];
+		const keyed = new TeleBunny(TOKEN, {
+			webhookSecret: SECRET,
+			updateKey: (update) => update.message?.chat.id,
+		});
+
+		keyed.on('message', async (msg) => {
+			log.push(`start ${msg.text}`);
+			await sleep(20);
+			log.push(`end ${msg.text}`);
+		});
+		keyed.on('callback_query', (query) => {
+			log.push(`query ${query.data}`);
+		});
+
+		await Promise.all([
+			keyed.processUpdate(chatUpdate(1, 1, 'a1'), headers),
+			keyed.processUpdate(chatUpdate(2, 1, 'a2'), headers),
+			keyed.processUpdate(chatUpdate(3, 2, 'b1'), headers),
+			keyed.processUpdate(
+				{
+					update_id: 4,
+					callback_query: {
+						id: '1',
+						from: { id: 7, is_bot: false, first_name: 'Bunny' },
+						chat_instance: '1',
+						data: 'free',
+					},
+				},
+				headers,
+			),
+		]);
+
+		assert.ok(log.indexOf('start a2') > log.indexOf('end a1'));
+		assert.ok(log.indexOf('start b1') < log.indexOf('end a1'));
+		assert.ok(log.indexOf('query free') < log.indexOf('end a1'));
+	});
+
+	it('reports a failing updateKey and still handles the update', async () => {
+		const errors: unknown[] = [];
+		const received: string[] = [];
+		const keyed = new TeleBunny(TOKEN, {
+			webhookSecret: SECRET,
+			onError: (error) => errors.push(error),
+			updateKey: () => {
+				throw new Error('broken key');
+			},
+		});
+
+		keyed.on('message', (msg) => {
+			received.push(msg.text ?? '');
+		});
+
+		await keyed.processUpdate(chatUpdate(1, 1, 'a'), headers);
+
+		assert.deepEqual(received, ['a']);
+		assert.match(String(errors[0]), /broken key/);
+	});
+
 	it('dispatches multi-word update types', async () => {
 		const { bot } = await setup(() => ok(true));
 		const received: string[] = [];
@@ -589,6 +654,44 @@ describe('Polling', () => {
 
 		return { handler, maxInFlight: () => maxInFlight };
 	}
+
+	it('handles one chat in order and different chats in parallel with updateKey', async () => {
+		const { handler } = pollingHandler([
+			[
+				chatUpdate(1, 1, 'a1'),
+				chatUpdate(2, 1, 'a2'),
+				chatUpdate(3, 2, 'b1'),
+			],
+		]);
+		const log: string[] = [];
+		let active = 0;
+		let peak = 0;
+
+		telegram = await startFakeTelegram(handler);
+		bot = new TeleBunny(TOKEN, {
+			apiRoot: telegram.apiRoot,
+			updateKey: (update) => update.message?.chat.id,
+		});
+
+		const done = new Promise<void>((resolve) => {
+			bot!.on('message', async (msg) => {
+				peak = Math.max(peak, ++active);
+				log.push(`start ${msg.text}`);
+				await sleep(20);
+				log.push(`end ${msg.text}`);
+				active--;
+
+				if (log.length === 6) resolve();
+			});
+		});
+
+		await bot.startPolling({ timeout: 1 });
+		await done;
+
+		assert.equal(peak, 2);
+		assert.ok(log.indexOf('start b1') < log.indexOf('end a1'));
+		assert.ok(log.indexOf('start a2') > log.indexOf('end a1'));
+	});
 
 	it('removes the webhook, handles updates in order and confirms them on stop', async () => {
 		const all = updates('a', 'b', 'c');

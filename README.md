@@ -15,7 +15,7 @@ Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.t
 - No dependencies, only Node.js built-ins
 - Idiomatic JavaScript API: camelCase names, positional required parameters and an options object for the rest. Telegram's snake_case is converted under the hood
 - TypeScript types for every Bot API method, object and update
-- Long polling handles updates in order and waits for running listeners on stop
+- Parallel update handling that keeps each chat's updates in order
 - Webhook requests are verified with a secret token, generated automatically if you don't set one
 - Requests rejected with 429 are retried after the delay Telegram asks for
 
@@ -122,6 +122,34 @@ await bot.sendMediaGroup(chatId, [
 ```
 
 Flood-control errors (429) are handled automatically and resent after `retryAfter` seconds, up to `maxRetries` times (3 by default)
+
+## ⚡ Performance
+
+By default long polling handles one update at a time, so a slow listener holds up every chat. Set `updateKey` to run updates in parallel while keeping order where it matters:
+
+```typescript
+const bot = new TeleBunny('<TOKEN>', {
+  // Updates from the same chat run one after another, different chats in parallel
+  updateKey: (update) =>
+    update.message?.chat.id ?? update.callbackQuery?.from.id,
+});
+```
+
+- Updates with the same key are handled in the order Telegram sent them
+- Updates with different keys or no key run at the same time
+- `processUpdate` follows the same rules for webhook updates
+- `concurrency` in `startPolling` limits how many listeners run at once, for example to protect a database. There is no limit by default with `updateKey`. Webhooks are limited by `maxConnections` in `setWebhook` instead
+- `queueCapacity` still pauses polling until listeners catch up
+
+Node's global agent closes connections after 5 seconds without traffic. The first request after a pause then has to open a new TLS connection, which costs a few extra round trips. If your bot often pauses between requests, pass an agent that keeps connections open:
+
+```typescript
+import { Agent } from 'node:https';
+
+const bot = new TeleBunny('<TOKEN>', {
+  agent: new Agent({ keepAlive: true }),
+});
+```
 
 ## 🌐 Proxy
 

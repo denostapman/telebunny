@@ -21,6 +21,15 @@ export interface TeleBunnyOptions extends ApiOptions {
 	 * 1-256 characters: A-Z, a-z, 0-9, `_` and `-`. When omitted, `setWebhook` generates one.
 	 */
 	webhookSecret?: string;
+	/**
+	 * Returns the key that orders updates: updates with the same key are handled one after
+	 * another, updates with different keys or no key run in parallel. Applies to polling
+	 * and `processUpdate`. Without it, polling handles updates strictly in order.
+	 *
+	 * @example
+	 * updateKey: (update) => update.message?.chat.id ?? update.callbackQuery?.from.id
+	 */
+	updateKey?: (update: Update) => string | number | undefined;
 }
 
 /** Request headers as given by node:http or the Fetch API. */
@@ -48,6 +57,8 @@ class TeleBunny extends BotApi {
 	readonly #token: string;
 	readonly #onError: (error: unknown) => void;
 	readonly #listeners = new Map<UpdateType, ListenerEntry[]>();
+	readonly #updateKey?: (update: Update) => string | number | undefined;
+	readonly #lanes = new Map<string | number, Promise<void>>();
 	#webhookSecret?: string;
 	#poller?: Poller;
 
@@ -57,6 +68,7 @@ class TeleBunny extends BotApi {
 		this.#token = token;
 		this.#onError = options.onError ?? ((error) => console.error(error));
 		this.#webhookSecret = options.webhookSecret;
+		this.#updateKey = options.updateKey;
 	}
 
 	get token(): string {
@@ -106,6 +118,7 @@ class TeleBunny extends BotApi {
 			(update) => this.#dispatch(update),
 			this.#onError,
 			options,
+			this.#updateKey && ((update) => this.#keyOf(update)),
 		);
 
 		this.#poller = poller;
@@ -134,7 +147,33 @@ class TeleBunny extends BotApi {
 		headers: WebhookHeaders,
 	): Promise<void> {
 		this.#verifySecret(headers);
-		await this.#dispatch(parseUpdate(body));
+
+		const update = parseUpdate(body);
+		const key = this.#updateKey && this.#keyOf(update);
+
+		if (key === undefined) return this.#dispatch(update);
+
+		const run = (this.#lanes.get(key) ?? Promise.resolve()).then(() =>
+			this.#dispatch(update),
+		);
+		const tail = run.catch(() => {});
+
+		this.#lanes.set(key, tail);
+
+		try {
+			await run;
+		} finally {
+			if (this.#lanes.get(key) === tail) this.#lanes.delete(key);
+		}
+	}
+
+	#keyOf(update: Update): string | number | undefined {
+		try {
+			return this.#updateKey?.(update);
+		} catch (error) {
+			this.#onError(error);
+			return undefined;
+		}
 	}
 
 	#verifySecret(headers: WebhookHeaders): void {

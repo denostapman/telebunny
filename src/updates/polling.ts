@@ -13,7 +13,11 @@ export interface PollingOptions {
 	/** Update types to receive. Telegram keeps the previous setting when omitted. */
 	allowedUpdates?: UpdateType[];
 	dropPendingUpdates?: boolean;
-	/** Updates handled at the same time. 1 keeps them strictly ordered. */
+	/**
+	 * Maximum number of listeners running at the same time, e.g. to protect a database.
+	 * Ordering is controlled by `updateKey`. Defaults to 1 (strict order) without
+	 * `updateKey` and to no limit with it. Webhooks are limited by `maxConnections` in `setWebhook` instead.
+	 */
 	concurrency?: number;
 	/** Queued updates after which polling pauses until handlers catch up. */
 	queueCapacity?: number;
@@ -43,6 +47,7 @@ export class Poller {
 		handle: (update: Update) => Promise<void>,
 		onError: (error: unknown) => void,
 		options: PollingOptions = {},
+		key?: (update: Update) => unknown,
 	) {
 		this.#api = api;
 		this.#onError = onError;
@@ -65,8 +70,9 @@ export class Poller {
 				}
 			},
 			{
-				concurrency: options.concurrency,
+				concurrency: options.concurrency ?? (key ? Infinity : 1),
 				capacity: options.queueCapacity ?? this.#limit,
+				key,
 			},
 		);
 	}
