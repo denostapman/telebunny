@@ -1,3 +1,4 @@
+import type { Agent } from 'node:http';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { TeleBunnyError, TelegramError } from '../errors.ts';
@@ -8,7 +9,7 @@ import {
 	type RequestBody,
 	type RequestOptions,
 } from './http.ts';
-import { InputFile } from './input-file.ts';
+import { InputFile, readInputFile } from './input-file.ts';
 import type {
 	ApiMethod,
 	ParamsOf,
@@ -22,6 +23,12 @@ export interface ApiOptions {
 	timeout?: number;
 	/** How many times a request is repeated after a 429 error. */
 	maxRetries?: number;
+	/**
+	 * Agent for HTTP(S) requests, e.g. a proxy agent from `https-proxy-agent` or
+	 * `socks-proxy-agent`. Defaults to Node's global agent, which keeps connections
+	 * alive and honors `HTTPS_PROXY` when `NODE_USE_ENV_PROXY=1` is set.
+	 */
+	agent?: Agent;
 }
 
 export type CallOptions = RequestOptions;
@@ -52,7 +59,10 @@ export class TelegramApi {
 		);
 
 		this.#base = `${root}/bot${token}/`;
-		this.#http = new HttpClient({ timeout: options.timeout });
+		this.#http = new HttpClient({
+			timeout: options.timeout,
+			agent: options.agent,
+		});
 		this.#maxRetries = options.maxRetries ?? 3;
 	}
 
@@ -135,7 +145,7 @@ async function toRequestBody(
 	params: Record<string, unknown>,
 ): Promise<RequestBody> {
 	const files = new Map<string, InputFile>();
-	const fields: Record<string, unknown> = {};
+	const fields: Record<string, unknown> = Object.create(null);
 
 	const convert = (value: unknown): unknown => {
 		if (typeof value !== 'object' || value === null) return value;
@@ -177,22 +187,28 @@ async function toRequestBody(
 
 	if (files.size === 0) return { type: BodyType.Json, data: fields };
 
-	const form = new FormData();
+	const textFields: [string, string][] = [];
 
 	for (const key in fields) {
 		const value = fields[key];
 
-		form.append(
+		textFields.push([
 			key,
 			typeof value === 'object' && value !== null
 				? JSON.stringify(value)
 				: String(value),
-		);
+		]);
 	}
 
-	for (const [name, file] of files) {
-		form.append(name, await file.toBlob(), file.filename);
-	}
-
-	return { type: BodyType.FormData, data: form };
+	return {
+		type: BodyType.Multipart,
+		fields: textFields,
+		files: await Promise.all(
+			Array.from(files, async ([name, file]) => ({
+				name,
+				filename: file.filename,
+				data: await readInputFile(file),
+			})),
+		),
+	};
 }

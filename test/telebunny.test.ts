@@ -332,6 +332,25 @@ describe('Key conversion', () => {
 		]);
 		assert.equal(request.files.file0.content, 'a');
 	});
+
+	it('does not send parameters hidden in a __proto__ key', async () => {
+		const { bot, telegram } = await setup(() => ok(message('')));
+		const untrusted = JSON.parse(
+			'{"caption":"hi","__proto__":{"reply_markup":"{}","protect_content":"true"}}',
+		);
+
+		await bot.sendMessage('text', { chatId: 42, ...untrusted });
+		await bot.sendDocument(new InputFile(Buffer.from('x'), 'a.txt'), {
+			chatId: 42,
+			...untrusted,
+		});
+
+		for (const { params } of telegram.requests) {
+			assert.equal(Object.hasOwn(params, 'reply_markup'), false);
+			assert.equal(Object.hasOwn(params, 'protect_content'), false);
+			assert.equal(params.caption, 'hi');
+		}
+	});
 });
 
 describe('Updates', () => {

@@ -123,6 +123,24 @@ await bot.sendMediaGroup(chatId, [
 
 Flood-control errors (429) are handled automatically and resent after `retryAfter` seconds, up to `maxRetries` times (3 by default)
 
+## 🌐 Proxy
+
+Requests go through Node's global agent, so the built-in proxy support works as is:
+
+```sh
+NODE_USE_ENV_PROXY=1 HTTPS_PROXY=http://proxy.local:8080 node bot.js
+```
+
+Any other `http.Agent` can be passed with the `agent` option, for example a SOCKS proxy:
+
+```typescript
+import { SocksProxyAgent } from 'socks-proxy-agent';
+
+const bot = new TeleBunny('<TOKEN>', {
+  agent: new SocksProxyAgent('socks5://127.0.0.1:1080'),
+});
+```
+
 ## 🔑 License
 
 [MIT](LICENSE.md)

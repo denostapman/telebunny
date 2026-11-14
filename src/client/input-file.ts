@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 export type InputFileSource =
 	string | URL | Uint8Array | Blob | AsyncIterable<Uint8Array>;
 
+let sourceOf: (file: InputFile) => InputFileSource;
+
 /**
  * A file to upload. Plain strings passed to file parameters are sent as
  * file_id or URL; local files and binary data must be wrapped in InputFile.
@@ -17,6 +19,10 @@ export class InputFile {
 	readonly filename: string;
 	readonly #source: InputFileSource;
 
+	static {
+		sourceOf = (file) => file.#source;
+	}
+
 	/**
 	 * @param source local path (string or file: URL), binary data, Blob or async iterable stream
 	 * @param filename name shown to users, defaults to the path basename
@@ -27,21 +33,9 @@ export class InputFile {
 	}
 
 	async toBlob(): Promise<Blob> {
-		const source = this.#source;
+		const data = await readInputFile(this);
 
-		if (typeof source === 'string' || source instanceof URL) {
-			return openAsBlob(source);
-		}
-		if (source instanceof Blob) return source;
-		if (source instanceof Uint8Array) {
-			return new Blob([new Uint8Array(source)]);
-		}
-
-		const chunks: Uint8Array[] = [];
-
-		for await (const chunk of source) chunks.push(chunk);
-
-		return new Blob([Buffer.concat(chunks)]);
+		return data instanceof Blob ? data : new Blob([new Uint8Array(data)]);
 	}
 
 	static #defaultFilename(source: InputFileSource): string {
@@ -50,4 +44,21 @@ export class InputFile {
 		if (source instanceof File) return source.name;
 		return 'file';
 	}
+}
+
+export async function readInputFile(
+	file: InputFile,
+): Promise<Uint8Array | Blob> {
+	const source = sourceOf(file);
+
+	if (typeof source === 'string' || source instanceof URL) {
+		return openAsBlob(source);
+	}
+	if (source instanceof Uint8Array || source instanceof Blob) return source;
+
+	const chunks: Uint8Array[] = [];
+
+	for await (const chunk of source) chunks.push(chunk);
+
+	return Buffer.concat(chunks);
 }
