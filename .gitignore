@@ -4,6 +4,7 @@ lib
 .*
 
 !.envrc
+!.github
 !.gitignore
 !.editorconfig
 !.prettierrc
