@@ -6,5 +6,6 @@ lib
 !.envrc
 !.github
 !.gitignore
+!.npmrc
 !.editorconfig
 !.prettierrc
