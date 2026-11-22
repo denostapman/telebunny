@@ -632,7 +632,9 @@ describe('Polling', () => {
 		const handler: ApiHandler = async (request, signal) => {
 			if (request.method !== 'getUpdates') return ok(true);
 
-			inFlight++;
+			const longPoll = Number(request.params.timeout ?? 0) > 0;
+
+			if (longPoll) inFlight++;
 			maxInFlight = Math.max(maxInFlight, inFlight);
 
 			try {
@@ -648,7 +650,7 @@ describe('Polling', () => {
 
 				return ok([]);
 			} finally {
-				inFlight--;
+				if (longPoll) inFlight--;
 			}
 		};
 

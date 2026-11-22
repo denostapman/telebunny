@@ -27,6 +27,7 @@ export interface ApiOptions {
 	 * Agent for HTTP(S) requests, e.g. a proxy agent from `https-proxy-agent` or
 	 * `socks-proxy-agent`. Defaults to Node's global agent, which keeps connections
 	 * alive and honors `HTTPS_PROXY` when `NODE_USE_ENV_PROXY=1` is set.
+	 * Node.js only: the constructor throws on Bun and Deno, use `HTTPS_PROXY` there.
 	 */
 	agent?: Agent;
 }

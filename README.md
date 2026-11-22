@@ -2,10 +2,12 @@
 
 <div align="center">
 
-Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.telegram.org/bots/api).
+Lightweight zero-dependency module for [Telegram Bot API](https://core.telegram.org/bots/api) on Node.js, Bun and Deno.
 
 [![Bot API Version](https://img.shields.io/badge/Bot%20API-v10.4-00aced.svg?logo=telegram)](https://core.telegram.org/bots/api#recent-changes)
-[![Node Version](https://img.shields.io/badge/Node-v24.22.1+-brightgreen.svg)](https://nodejs.org/)
+[![Node Version](https://img.shields.io/badge/Node-v22.0.0+-brightgreen.svg)](https://nodejs.org/)
+[![Bun Version](https://img.shields.io/badge/Bun-v1.2.11+-f9f1e1.svg)](https://bun.com/)
+[![Deno Version](https://img.shields.io/badge/Deno-v2.8.0+-black.svg)](https://deno.com/)
 [![NPM Package Version](https://img.shields.io/npm/v/telebunny.svg)](https://www.npmjs.com/package/telebunny)
 
 </div>
@@ -13,6 +15,7 @@ Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.t
 ## ✨ Features
 
 - No dependencies, only Node.js built-ins
+- Runs on Node.js, Bun and Deno
 - Idiomatic JavaScript API: camelCase names, positional required parameters and an options object for the rest. Telegram's snake_case is converted under the hood
 - TypeScript types for every Bot API method, object and update
 - Parallel update handling that keeps each chat's updates in order
@@ -22,7 +25,15 @@ Lightweight zero-dependency Node.js module for [Telegram Bot API](https://core.t
 ## 📥 Installation
 
 ```sh
-npm i telebunny
+npm i telebunny          # Node.js
+bun add telebunny        # Bun
+deno add npm:telebunny   # Deno
+```
+
+Deno needs `--allow-net` for API requests, polling and webhook servers, and `--allow-read` to upload files from disk with `InputFile`. Add `--allow-env` if your own code reads environment variables, for example the bot token:
+
+```sh
+deno run --allow-net --allow-read --allow-env=BOT_TOKEN bot.ts
 ```
 
 ## 🐇 Usage (Polling)
@@ -153,13 +164,20 @@ const bot = new TeleBunny('<TOKEN>', {
 
 ## 🌐 Proxy
 
-Requests go through Node's global agent, so the built-in proxy support works as is:
+On Node.js requests go through Node's global agent, so the built-in proxy support works as is (Node 22.21.0+ or 24.5.0+):
 
 ```sh
 NODE_USE_ENV_PROXY=1 HTTPS_PROXY=http://proxy.local:8080 node bot.js
 ```
 
-Any other `http.Agent` can be passed with the `agent` option, for example a SOCKS proxy:
+Bun and Deno read `HTTPS_PROXY` on their own, Deno needs only `--allow-net` for it:
+
+```sh
+HTTPS_PROXY=http://proxy.local:8080 bun bot.ts
+HTTPS_PROXY=http://proxy.local:8080 deno run --allow-net bot.ts
+```
+
+On Node.js any other `http.Agent` can be passed with the `agent` option, for example a SOCKS proxy. Bun and Deno don't support this option and throw when it's set:
 
 ```typescript
 import { SocksProxyAgent } from 'socks-proxy-agent';

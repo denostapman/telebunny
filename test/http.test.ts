@@ -18,6 +18,12 @@ import { promisify } from 'node:util';
 
 import { HttpError } from '../src/errors.ts';
 import { BodyType, HttpClient } from '../src/client/http.ts';
+import {
+	fetchRuntimeIt,
+	nodeDescribe,
+	nodeIt,
+	onNode,
+} from './utils/runtime.ts';
 
 async function parseForm(body: Buffer, contentType: string) {
 	const form = await new Response(new Uint8Array(body), {
@@ -29,12 +35,7 @@ async function parseForm(body: Buffer, contentType: string) {
 		fields[name] =
 			typeof value === 'string'
 				? value
-				: {
-						name: value.name,
-						type: value.type,
-						size: value.size,
-						tail: (await value.text()).slice(-8),
-					};
+				: { size: value.size, tail: (await value.text()).slice(-8) };
 	}
 
 	return fields;
@@ -80,6 +81,11 @@ describe('HttpClient', () => {
 					contentLength: Number(req.headers['content-length']),
 					received: raw.length,
 					transferEncoding: req.headers['transfer-encoding'],
+					partHeaders: raw
+						.toString('latin1')
+						.match(
+							/Content-Disposition: [^\r\n]*(\r\nContent-Type: [^\r\n]*)?/g,
+						),
 					fields: await parseForm(
 						raw,
 						req.headers['content-type'] ?? '',
@@ -121,7 +127,7 @@ describe('HttpClient', () => {
 				{
 					name: 'document',
 					filename: 'a "quoted".txt',
-					data: new Blob(['hello'], { type: 'text/plain' }),
+					data: new Blob(['hello'], { type: 'application/pdf' }),
 				},
 				{
 					name: 'thumbnail',
@@ -131,22 +137,23 @@ describe('HttpClient', () => {
 			],
 		});
 
-		assert.deepEqual((json as { fields: unknown }).fields, {
+		const { fields, partHeaders } = json as {
+			fields: unknown;
+			partHeaders: string[];
+		};
+
+		assert.deepEqual(fields, {
 			chat_id: '42',
 			caption: 'line\nbreak',
-			document: {
-				name: 'a "quoted".txt',
-				type: 'text/plain',
-				size: 5,
-				tail: 'hello',
-			},
-			thumbnail: {
-				name: 't',
-				type: 'application/octet-stream',
-				size: 3,
-				tail: '\x01\x02\x03',
-			},
+			document: { size: 5, tail: 'hello' },
+			thumbnail: { size: 3, tail: '\x01\x02\x03' },
 		});
+		assert.deepEqual(partHeaders, [
+			'Content-Disposition: form-data; name="chat_id"',
+			'Content-Disposition: form-data; name="caption"',
+			'Content-Disposition: form-data; name="document"; filename="a %22quoted%22.txt"\r\nContent-Type: application/pdf',
+			'Content-Disposition: form-data; name="thumbnail"; filename="t"\r\nContent-Type: application/octet-stream',
+		]);
 	});
 
 	it('escapes quotes and line breaks in multipart names', async () => {
@@ -162,15 +169,10 @@ describe('HttpClient', () => {
 			],
 		});
 
-		assert.deepEqual((json as { fields: unknown }).fields, {
-			'evil"\r\nX-Injected: 1': 'value',
-			document: {
-				name: 'evil"\r\nContent-Type: text/html',
-				type: 'application/octet-stream',
-				size: 1,
-				tail: 'x',
-			},
-		});
+		assert.deepEqual((json as { partHeaders: string[] }).partHeaders, [
+			'Content-Disposition: form-data; name="evil%22%0D%0AX-Injected: 1"',
+			'Content-Disposition: form-data; name="document"; filename="evil%22%0D%0AContent-Type: text/html"\r\nContent-Type: application/octet-stream',
+		]);
 	});
 
 	it('streams large Blob uploads with Content-Length', async () => {
@@ -226,17 +228,30 @@ describe('HttpClient', () => {
 		assert.equal(first.json, second.json);
 	});
 
-	it('rejects without crashing when the request cannot be created', async () => {
-		const client = new HttpClient({ timeout: 20, agent: new HttpsAgent() });
+	nodeIt(
+		'rejects without crashing when the request cannot be created',
+		async () => {
+			const client = new HttpClient({
+				timeout: 20,
+				agent: new HttpsAgent(),
+			});
 
-		await assert.rejects(
-			client.post(`${url}/port`, { type: BodyType.Json, data: {} }),
-			{ code: 'ERR_INVALID_PROTOCOL' },
-		);
-		await new Promise((resolve) => setTimeout(resolve, 60));
+			await assert.rejects(
+				client.post(`${url}/port`, { type: BodyType.Json, data: {} }),
+				{ code: 'ERR_INVALID_PROTOCOL' },
+			);
+			await new Promise((resolve) => setTimeout(resolve, 60));
+		},
+	);
+
+	fetchRuntimeIt('rejects the agent option on Bun and Deno', () => {
+		assert.throws(() => new HttpClient({ agent: new Agent() }), {
+			name: 'TeleBunnyError',
+			message: /only supported on Node\.js/,
+		});
 	});
 
-	it('sends requests through a custom agent', async () => {
+	nodeIt('sends requests through a custom agent', async () => {
 		class CountingAgent extends Agent {
 			connections = 0;
 
@@ -347,11 +362,11 @@ describe('HttpClient upload failures', () => {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 
 		assert.equal(status, 413);
-		assert.equal(open, 0);
+		if (onNode) assert.equal(open, 0);
 		server.close();
 	});
 
-	it('closes the connection when a file fails mid-upload', async () => {
+	nodeIt('closes the connection when a file fails mid-upload', async () => {
 		const closed: number[] = [];
 		const server = createServer((req, res) => {
 			req.on('error', () => {});
@@ -400,7 +415,7 @@ describe('HttpClient upload failures', () => {
 	});
 });
 
-describe('HttpClient with NODE_USE_ENV_PROXY', () => {
+nodeDescribe('HttpClient with NODE_USE_ENV_PROXY', () => {
 	let proxy: Server;
 	let proxyUrl: string;
 

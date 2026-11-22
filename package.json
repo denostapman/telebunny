@@ -1,7 +1,7 @@
 {
 	"name": "telebunny",
-	"version": "3.1.0",
-	"description": "Lightweight zero-dependency Node.js module for Telegram Bot API",
+	"version": "3.2.0",
+	"description": "Lightweight zero-dependency module for Telegram Bot API on Node.js, Bun and Deno",
 	"exports": {
 		".": {
 			"types": "./lib/index.d.ts",
@@ -12,7 +12,10 @@
 	"scripts": {
 		"clean": "node -e \"fs.rmSync('lib', { recursive: true, force: true })\"",
 		"build": "node --run clean && tsc",
-		"test": "node --test test/*.test.ts",
+		"test": "npm run test:node && npm run test:bun && npm run test:deno",
+		"test:node": "node --test test/*.test.ts",
+		"test:bun": "for file in test/*.test.ts; do bun test \"./$file\" || exit 1; done",
+		"test:deno": "deno test --allow-all --no-check test/",
 		"prepack": "npm run build",
 		"prepublishOnly": "npm test",
 		"format": "prettier --write .",
@@ -39,7 +42,9 @@
 	"author": "Funny Bunny",
 	"license": "MIT",
 	"engines": {
-		"node": "^24.22.1 || >=26.12.1"
+		"node": ">=22.0.0",
+		"bun": ">=1.2.11",
+		"deno": ">=2.8.0"
 	},
 	"devDependencies": {
 		"@types/node": "26.6.5",

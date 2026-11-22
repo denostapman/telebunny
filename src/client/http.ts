@@ -7,7 +7,7 @@ import {
 } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 
-import { HttpError } from '../errors.ts';
+import { HttpError, TeleBunnyError } from '../errors.ts';
 
 export const BodyType = {
 	Json: 'json',
@@ -57,11 +57,55 @@ interface RawResponse {
 	text: string;
 }
 
+const USE_FETCH = 'Bun' in globalThis || 'Deno' in globalThis;
+
+async function sendWithFetch(
+	url: URL,
+	{ headers, parts: encoded }: EncodedBody,
+	timeout: number,
+	signal?: AbortSignal,
+): Promise<RawResponse> {
+	const parts = encoded as (Uint8Array<ArrayBuffer> | Blob)[];
+	const timeoutSignal = AbortSignal.timeout(timeout);
+	const combined = signal
+		? AbortSignal.any([timeoutSignal, signal])
+		: timeoutSignal;
+
+	try {
+		const body =
+			parts.length === 1 && !(parts[0] instanceof Blob)
+				? parts[0]
+				: Buffer.concat(
+						await Promise.all(
+							parts.map((part) =>
+								part instanceof Blob ? part.bytes() : part,
+							),
+						),
+					);
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': String(headers['Content-Type']) },
+			body,
+			signal: combined,
+		});
+
+		return { status: res.status, text: await res.text() };
+	} catch (error) {
+		throw combined.aborted ? combined.reason : error;
+	}
+}
+
 export class HttpClient {
 	readonly #timeout: number;
 	readonly #agent?: Agent;
 
 	constructor(options: HttpClientOptions = {}) {
+		if (options.agent && USE_FETCH) {
+			throw new TeleBunnyError(
+				'The agent option is only supported on Node.js. On Bun and Deno set HTTPS_PROXY to use a proxy',
+			);
+		}
+
 		this.#timeout = options.timeout ?? 60_000;
 		this.#agent = options.agent;
 	}
@@ -71,12 +115,12 @@ export class HttpClient {
 		body: RequestBody,
 		options: RequestOptions = {},
 	): Promise<HttpResponse> {
-		const { status, text } = await this.#send(
-			new URL(url),
-			encode(body),
-			options.timeout ?? this.#timeout,
-			options.signal,
-		);
+		const target = new URL(url);
+		const encoded = encode(body);
+		const timeout = options.timeout ?? this.#timeout;
+		const { status, text } = await (USE_FETCH
+			? sendWithFetch(target, encoded, timeout, options.signal)
+			: this.#send(target, encoded, timeout, options.signal));
 
 		try {
 			return { status, json: JSON.parse(text) };
